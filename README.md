@@ -10,7 +10,7 @@ A data product is the production output from a statistical analysis. Data produc
 
 In addition to several quizes, the course requires the completion of three Peer-Graded Assignments:
 
-1. **R Markdown and Leaflet**
+1. [**R Markdown and Leaflet**](https://yohance-nicholas.github.io/Developing-Data-Products/1_R_Markdown_and_Leaflet.html)
 2. **R Markdown Presentation & Plotly**
 3. **Shiny Application and Reproducible Pitch**
 
