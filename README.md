@@ -18,6 +18,4 @@ These assignments challenge candidates to practice how to communicate using stat
 
 # Files in the Repository
 
-In addition to this readme file, the repository contains the following files:
-
-<TO BE COMPLETED>
+In addition to this readme file, the repository contains three folders containing the files generated in the preparation of these coursework projects.
