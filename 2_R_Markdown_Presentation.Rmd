@@ -1,0 +1,289 @@
+---
+title: 'R Markdown Presentation & Plotly'
+subtitle: 'Analysing the COVID-19 pandemic among CARICOM Member States'
+author: "Yohance Nicholas"
+date: "4/8/2020"
+output: ioslides_presentation
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+```
+
+## Introduction
+
+This website was created in partial fulfilment of the [Developing Data Products Course](https://www.coursera.org/learn/data-products/home/welcome) which comprises one of the five courses necessary for the Data Science: Statistics and Machine Learning Specialization offered by Johns Hopikins University through Coursera. 
+
+This assignment challenged candidates to Create a web page presentation using R Markdown that features a plot created with Plotly. 
+
+Once completed, candidates were required to host their webpage on either GitHub Pages, RPubs, or NeoCities. The webpage presentation must contain the date that you created the document, and it must contain a plot created with Plotly.
+
+All other coursework projects completed as part of this course can be found at my [GitHub repository](https://yohance-nicholas.github.io/Developing-Data-Products/) for this course. 
+
+## Rationale
+
+The Coronavirus disease 2019 (COVID-19) is an infectious disease caused by severe acute respiratory syndrome coronavirus 2 (SARS-CoV-2). The disease was first identified in December 2019 in Wuhan, the capital of China's Hubei province, and has since spread globally, resulting in the ongoing 2019–20 coronavirus pandemic. 
+
+For this coursework project, I have opted to use Plotly to illustrate the spread of the Novel Coronavirus across [CARICOM Member States](https://caricom.org/member-states-and-associate-members/). All CARICOM countries are classified as developing countries. 
+
+They are all relatively small in terms of population and size, and diverse in terms of geography and population, culture and levels of economic and social development.  While the pandemic was slow to reach the CARICOM region, the begining of March saw the onset of the pandemic among CARICOM member states. 
+
+## Data Sources
+
+With a view to map the spread of the disease thus far, I have elected to use two main data sources. Firstly, to obtain the most current data on the incidence of COVID-19, I have opted to utilise the data colelcted by the [Johns Hopkins Coronavirus Resource Centre](https://coronavirus.jhu.edu/). The [2019 Novel Coronavirus COVID-19 (2019-nCoV) Data Repository by Johns Hopkins CSSE](https://github.com/CSSEGISandData/COVID-19) is compiled from a cross section of sources daily. 
+
+To supplement this data with relevant socio-demographic data, I have opted to utilise the [World Development Indicator Database](http://datatopics.worldbank.org/world-development-indicators/) maintained by the World Bank Group. The World Development Indicators is a compilation of relevant, high-quality, and internationally comparable statistics about global development and the fight against poverty. The database contains 1,600 time series indicators for 217 economies and more than 40 country groups, with data for many indicators going back more than 50 years.
+
+## Data Cleaning 
+
+```{r include=FALSE}
+library(tidyverse)
+tidycovid19 <- readRDS(gzcon(url("https://raw.githubusercontent.com/joachim-gassen/tidycovid19/master/cached_data/merged.RDS")))
+  
+caricom_tidycovid19 <- tidycovid19 %>% 
+  filter(country == "Antigua and Barbuda"|
+           country == "Bahamas"|
+           country == "Barbados"|
+           country == "Belize" |
+           country == "Dominica"|
+           country == "Grenada"|
+           country == "Guyana"|
+           country == "Haiti"|
+           country == "Jamaica"|
+           country == "Montserrat"|
+           country == "Saint Kitts and Nevis"|
+           country == "Saint Lucia"|
+           country == "Saint Vincent and the Grenadines"|
+           country == "Suriname"|
+           country == "Trinidad and Tobago") 
+
+caricom_today <- caricom_tidycovid19 %>% 
+  filter(date == max(date))
+
+march_till <- caricom_tidycovid19 %>% 
+  filter(date > "2020-03-07") %>% 
+  mutate(confirmed_per_100k = confirmed/population*100000,
+         deaths_per_100k = deaths/population*100000,
+         mortality_rate = deaths/confirmed*100)
+
+df <- caricom_today %>%
+  group_by(country) %>%
+  mutate(
+    reported_deaths = max(deaths),
+    soc_dist_measures = max(soc_dist)
+  ) %>%
+  select(country, iso3c, reported_deaths, soc_dist_measures) %>%
+  distinct() %>%
+  ungroup() %>%
+  arrange(-reported_deaths) %>%
+  head(20) 
+
+by_income <- group_by(march_till, income)
+by_country <- group_by(march_till, country)
+
+#CARICOM COVID-19 
+
+library(readr)
+library(tidyverse)
+library(tidyselect)
+library(countrycode)
+
+# Total Confirmed Cases
+covid_19_confirmed <- tbl_df(read_csv("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv", col_types = cols()))
+
+covid_19_confirmed <- covid_19_confirmed %>% 
+  select('Country/Region', Lat, Long, last_col()) %>% 
+  rename(country = 'Country/Region',
+         lat = Lat,
+         lng = Long,
+         confirmed = last_col()) %>%  
+  mutate(iso3c = countrycode(country,
+                             origin = "country.name",
+                             destination = "iso3c"))
+
+# Total Deaths
+covid_19_deaths <- tbl_df(read_csv("https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_deaths_global.csv", col_types = cols()))
+
+covid_19_deaths <- covid_19_deaths %>% 
+  select('Country/Region', last_col()) %>% 
+  rename(country = 'Country/Region',
+         deaths = last_col()) %>%  
+  mutate(iso3c = countrycode(country,
+                             origin = "country.name",
+                             destination = "iso3c")) %>% 
+  select(-country)
+
+covid_19_confirmed_and_deaths <- covid_19_confirmed %>% 
+  left_join(covid_19_deaths, 
+            by = 'iso3c') %>% 
+  select(-iso3c,iso3c)
+
+# Import Relevant Socio-Economic Data from the World Development Indicators Database
+
+library(wbstats)
+series <- c("NY.GDP.PCAP.KD", "SP.POP.TOTL", "SP.POP.0014.TO.ZS", "SP.POP.1564.TO.ZS", "SP.POP.65UP.TO.ZS", "AG.LND.TOTL.K2",
+            "EN.POP.DNST", "EN.URB.LCTY", "SP.DYN.LE00.IN")
+
+wb_data <- wb(indicator = series,
+              mrv = 1) %>% 
+  select(iso3c, value, indicatorID) %>% 
+  spread(indicatorID, value) %>% 
+  rename(gdp_capita_2018 = NY.GDP.PCAP.KD,
+         pop_2018 = SP.POP.TOTL,
+         pop_0_14_2018 = SP.POP.0014.TO.ZS,
+         pop_15_64_2018 = SP.POP.1564.TO.ZS,
+         pop_65_over_2018 = SP.POP.65UP.TO.ZS,
+         land_area = AG.LND.TOTL.K2,
+         pop_density = EN.POP.DNST,
+         pop_largest_city = EN.URB.LCTY,
+         life_expectancy = SP.DYN.LE00.IN)
+
+wb_countries <- wbcountries() %>% 
+  select(iso3c,
+         iso2c,
+         region,
+         incomeID,
+         income)
+
+wb_data <- wb_data %>%  left_join(wb_countries,
+            by = "iso3c")
+
+# Merge COVID-19 Confirmed Cases, World Bank Data and Filter CARICOM Countries
+caricom_covid <- covid_19_confirmed_and_deaths %>% 
+    filter(country == "Antigua and Barbuda"|
+           country == "Bahamas"|
+           country == "Barbados"|
+           country == "Belize" |
+           country == "Dominica"|
+           country == "Grenada"|
+           country == "Guyana"|
+           country == "Haiti"|
+           country == "Jamaica"|
+           country == "Montserrat"|
+           country == "Saint Kitts and Nevis"|
+           country == "Saint Lucia"|
+           country == "Saint Vincent and the Grenadines"|
+           country == "Suriname"|
+           country == "Trinidad and Tobago") %>% 
+  left_join(wb_data, 
+            by = 'iso3c') %>% 
+  mutate(lat = if_else(country == "Belize", 17.1899, lat),
+         lng = if_else(country == "Belize", -88.4976, lng),
+         confirmed_per_100k = confirmed/pop_2018*100000,
+         deaths_per_100k = deaths/pop_2018*100000,
+         mortality_rate = deaths/confirmed*100) %>% 
+  unite(popup, 
+        c("country","confirmed"), 
+        sep = ",", 
+        remove = FALSE) %>% 
+  select(-popup,popup)
+
+# write.csv(caricom_covid, sprintf("caricom_covid_data_%s.csv", Sys.Date()))
+```
+
+## Confirmed Cases of COVID-19 by CARICOM Member State
+
+```{r warning = FALSE, include=TRUE, cache = FALSE, comment = FALSE}
+suppressPackageStartupMessages(library(plotly))
+cc <- march_till %>% ggplot(aes(x=date, y=confirmed, group = income, colour = country)) +
+  geom_line() +
+  labs(x = "Date",
+       y = "Confirmed Cases") +
+  labs(caption = "Source: 2019 Novel Coronavirus COVID-19 (2019-nCoV) Data Repository by Johns Hopkins CSSE")
+
+ggplotly(cc)
+```
+
+## Cumulative Cases of COVID-19 in the CARICOM Region
+
+```{r warning = FALSE, include=TRUE, cache = FALSE, comment = FALSE}
+cc_cum <- march_till %>% ggplot(aes(x=date, y=confirmed, fill = country , colour = country)) +
+  geom_area() +
+  labs(x = "Date",
+       y = "Confirmed Cases") 
+
+ggplotly(cc_cum)
+```
+
+## Confirmed Cases of COVID-19 per 100,000 by CARICOM Member State
+
+```{r warning = FALSE, include=TRUE, cache = FALSE, comment = FALSE}
+cc100k <- march_till %>% ggplot(aes(x=date, y=confirmed_per_100k, group = income, colour = country)) +
+  geom_line() +
+  labs(x = "Date",
+       y = "Confirmed Cases per 100,000 persons") 
+
+ggplotly(cc100k)
+```
+
+## Confirmed Deaths of COVID-19 by CARICOM Member State
+
+```{r warning = FALSE, include=TRUE, cache = FALSE, comment = FALSE}
+cd <- march_till %>% ggplot(aes(x=date, y=deaths, group = income, colour = country)) +
+  geom_line() +
+  labs(x = "Date",
+       y = "Confirmed Deaths") +
+  ggtitle("Confirmed Deaths of COVID-19 by CARICOM Member State")
+
+ggplotly(cd)
+```
+
+## Cumulative Death Toll due to COVID-19 across the CARICOM Region
+
+```{r warning = FALSE, include=TRUE, cache = FALSE, comment = FALSE}
+cd_cum <- march_till %>% ggplot(aes(x=date, y=deaths, fill = income , colour = country)) +
+  geom_area() +
+  labs(x = "Date",
+       y = "Confirmed Cases") 
+
+ggplotly(cd_cum)
+```
+
+## Confirmed Deaths of COVID-19 per 100,000 by CARICOM Member State
+
+```{r warning = FALSE, include=TRUE, cache = FALSE, comment = FALSE}
+cd100k <- march_till %>% ggplot(aes(x=date, y=deaths_per_100k, group = income, colour = country)) +
+  geom_line() +
+  labs(x = "Date",
+       y = "Confirmed Deaths per 100,000 persons") +
+  ggtitle("Confirmed Deaths of COVID-19 per 100,000 by CARICOM Member State")
+
+ggplotly(cd100k)
+```
+
+## Mortality Rates by CARICOM Member State
+```{r warning = FALSE, include=TRUE, cache = FALSE, comment = FALSE}
+mort <- march_till %>% ggplot(aes(x=date, y=mortality_rate, group = income, colour = country)) +
+  geom_line() +
+  labs(x = "Date",
+       y = "Mortality Rate") 
+
+ggplotly(mort)
+```
+
+## Mapping the Pandemic with Leaflet() as at April 8th 2020
+
+```{r}
+library(leaflet)
+caricom_covid_map <- leaflet() %>% 
+  addProviderTiles(providers$CartoDB.DarkMatter) %>% 
+  addMarkers(lat = caricom_covid$lat, 
+             lng = caricom_covid$lng,
+             popupOptions = markerClusterOptions,
+             popup = caricom_covid$popup) %>% 
+  addCircleMarkers(lat = caricom_covid$lat, 
+                   lng = caricom_covid$lng,
+                   weight = 1,
+                   radius = caricom_covid$confirmed_per_100k,
+                   color = 'yellow') %>% 
+  addCircleMarkers(lat = caricom_covid$lat, 
+                   lng = caricom_covid$lng,
+                   weight = 1,
+                   radius = caricom_covid$deaths_per_100k,
+                   color = 'red') %>% 
+  addLegend("bottomright", 
+            colors= c('red', 'yellow'), 
+            labels= c('Deaths per 100,000', 'Confirmed Cases per 100,000'), 
+            title="Legend") 
+caricom_covid_map 
+```

@@ -1,0 +1,15 @@
+"","country","iso3c","date","confirmed","deaths","recovered","soc_dist","mov_rest","pub_health","soc_econ","lockdown","gtrends_score","gtrends_country_score","region","income","population","land_area_skm","pop_density","pop_largest_city","life_expectancy","gdp_capita","timestamp"
+"1","Antigua and Barbuda","ATG",2020-04-07,19,1,0,3,0,2,0,0,NA,NA,"Latin America & Caribbean ","High income",96286,440,218.831818181818,NA,76.752,15134.8841569088,2020-04-08 01:14:29
+"2","Bahamas","BHS",2020-04-07,33,6,5,5,4,15,0,0,NA,NA,"Latin America & Caribbean ","High income",385640,10010,38.5254745254745,NA,73.554,27261.2144822129,2020-04-08 01:14:29
+"3","Belize","BLZ",2020-04-07,7,1,0,3,6,12,0,0,NA,NA,"Latin America & Caribbean ","Upper middle income",383071,22810,16.7939938623411,NA,74.365,4248.99905543377,2020-04-08 01:14:29
+"4","Barbados","BRB",2020-04-07,63,3,6,11,2,38,0,0,NA,NA,"Latin America & Caribbean ","High income",286641,430,666.606976744186,NA,78.981,16018.0411266686,2020-04-08 01:14:29
+"5","Dominica","DMA",2020-04-07,15,0,1,0,3,10,0,0,NA,NA,"Latin America & Caribbean ","Upper middle income",71625,750,95.5,NA,NA,6694.34637135228,2020-04-08 01:14:29
+"6","Grenada","GRD",2020-04-07,12,0,0,4,3,6,0,0,NA,NA,"Latin America & Caribbean ","Upper middle income",111454,340,327.805882352941,NA,72.388,9096.32995901451,2020-04-08 01:14:29
+"7","Guyana","GUY",2020-04-07,33,5,8,NA,NA,NA,NA,NA,NA,NA,"Latin America & Caribbean ","Upper middle income",779004,196850,3.95734823469647,NA,69.624,3992.22625949241,2020-04-08 01:14:29
+"8","Haiti","HTI",2020-04-07,25,1,0,2,2,2,0,1,NA,NA,"Latin America & Caribbean ","Low income",11123176,27560,403.59854862119,2636763,63.29,730.296713024986,2020-04-08 01:14:29
+"9","Jamaica","JAM",2020-04-07,63,3,8,0,4,4,0,0,NA,NA,"Latin America & Caribbean ","Upper middle income",2934855,10830,270.993074792244,589083,74.267,4855.26207081811,2020-04-08 01:14:29
+"10","Saint Kitts and Nevis","KNA",2020-04-07,11,0,0,0,1,0,0,0,NA,NA,"Latin America & Caribbean ","High income",52441,260,201.696153846154,NA,NA,16942.6664176757,2020-04-08 01:14:29
+"11","Saint Lucia","LCA",2020-04-07,14,0,1,4,7,12,0,2,NA,NA,"Latin America & Caribbean ","Upper middle income",181889,610,298.17868852459,NA,75.907,8485.27171394218,2020-04-08 01:14:29
+"12","Suriname","SUR",2020-04-07,10,1,0,2,4,1,0,0,NA,NA,"Latin America & Caribbean ","Upper middle income",575991,156000,3.69225,NA,71.463,8040.94011128172,2020-04-08 01:14:29
+"13","Trinidad and Tobago","TTO",2020-04-07,107,8,1,0,1,0,0,0,NA,NA,"Latin America & Caribbean ","High income",1389858,5130,270.927485380117,544417,73.245,15161.0684555798,2020-04-08 01:14:29
+"14","Saint Vincent and the Grenadines","VCT",2020-04-07,8,0,1,2,0,12,0,0,NA,NA,"Latin America & Caribbean ","Upper middle income",110210,390,282.589743589744,NA,72.3,6852.60660188886,2020-04-08 01:14:29
