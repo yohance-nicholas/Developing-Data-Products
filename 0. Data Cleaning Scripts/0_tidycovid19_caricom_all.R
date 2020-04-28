@@ -1,6 +1,10 @@
-# CARICOM Today
+# CARICOM Covid Data Cleaning Script
+# Prepared by Yohance Nicholas
+# April 2020
+
 library(tidyverse)
 library(tsibble)
+library(tidyr)
 tidycovid19 <- readRDS(gzcon(url("https://raw.githubusercontent.com/joachim-gassen/tidycovid19/master/cached_data/merged.RDS")))
 
 # Add Spatial Coordinates
@@ -17,13 +21,19 @@ wb_data <- wb(indicator = series,
 wb_countries <- wbcountries() %>% 
   select(iso3c,
          lat,
-         long)
+         long) 
 
 wb_data <- wb_data %>%  left_join(wb_countries,
                                   by = "iso3c")
 
 tidycovid19 <- tidycovid19 %>%  left_join(wb_data,
-                                          by = "iso3c")
+                                          by = "iso3c")%>% 
+  unite(popup, 
+        c("country","confirmed"), 
+        sep = ",", 
+        remove = FALSE) %>% 
+  select(-popup,popup)
+
 # Create Aggregate Variables
 commodity <- c("GUY", "JAM", "TTO") # To create variable which identifies type of economy
 oecs <- c("ATG", "DMA", "GRD", "KNA", "LCA", "VCT") # To create variable which identifies OECS Member States
@@ -50,7 +60,8 @@ caricom_tidycovid19 <- tidycovid19 %>%
          confirmed_logratio = difference(log(confirmed)),
          confirmed_per_100k = confirmed/population*100000,
          deaths_per_100k = deaths/population*100000,
-         mortality_rate = deaths/confirmed*100)
+         mortality_rate = deaths/confirmed*100,
+         recovery_rate = recovered/confirmed*100) 
 
 caricom_today <- caricom_tidycovid19 %>% 
   filter(date == max(date))
@@ -106,9 +117,29 @@ top_6_mortality <- caricom_today %>%
   select(`iso3c`) %>%
   pull()
 
+top_6_recovery <- caricom_today %>%
+  filter(date == max(date)) %>%
+  group_by(`iso3c`) %>%
+  summarise(value = sum(recovery_rate, na.rm = T)) %>%
+  arrange(desc(value)) %>%
+  top_n(6) %>%
+  select(`iso3c`) %>%
+  pull()
 
-# Remove Unrequired Objects from the Environment --------------------------
-rm("series", "wb_countries", "wb_data", "tidycovid19")
+# Clean Data for Multiple Regression Model
+caricom_covid_regression_data <- data.frame(caricom_today %>% 
+                                              select(country,
+                                                     confirmed,
+                                                     confirmed_per_100k,
+                                                     deaths,
+                                                     deaths_per_100k,
+                                                     mortality_rate,
+                                                     population,
+                                                     pop_density,
+                                                     pop_0_14_2018,
+                                                     pop_15_64_2018,
+                                                     pop_65_over_2018,
+                                                     gdp_capita))
 
 # Export Data Set ---------------------------------------------------------
 # Time Series 
@@ -118,5 +149,8 @@ saveRDS(caricom_tidycovid19, sprintf("caricom_tidycovid19_%s.rds", Sys.Date()))
 # Cross Sectional
 write.csv(caricom_today, sprintf("tidycovid19_caricom_today_%s.csv", Sys.Date()))
 saveRDS(caricom_today, sprintf("caricom_tidycovid19_today_%s.rds", Sys.Date()))
+write.csv(caricom_covid_regression_data, sprintf("caricom_covid_regression_data_%s.csv", Sys.Date()))
+saveRDS(caricom_covid_regression_data, sprintf("caricom_covid_regression_data_%s.rds", Sys.Date()))
 
-
+# Remove Unrequired Objects from the Environment --------------------------
+rm("series", "wb_countries", "wb_data", "tidycovid19", "caricom_covid_regression_data")
