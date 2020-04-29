@@ -9,14 +9,17 @@ tidycovid19 <- readRDS(gzcon(url("https://raw.githubusercontent.com/joachim-gass
 
 # Add Spatial Coordinates
 library(wbstats)
-series <- c("SP.POP.0014.TO.ZS", "SP.POP.1564.TO.ZS", "SP.POP.65UP.TO.ZS")
+series <- c("SP.POP.0014.TO.ZS", "SP.POP.1564.TO.ZS", "SP.POP.65UP.TO.ZS", "SH.STA.DIAB.ZS", "SH.DTH.NCOM.ZS", "SH.DYN.NCOM.ZS")
 wb_data <- wb(indicator = series,
               mrv = 1) %>% 
   select(iso3c, value, indicatorID) %>% 
   spread(indicatorID, value) %>% 
   rename(pop_0_14_2018 = SP.POP.0014.TO.ZS,
          pop_15_64_2018 = SP.POP.1564.TO.ZS,
-         pop_65_over_2018 = SP.POP.65UP.TO.ZS)
+         pop_65_over_2018 = SP.POP.65UP.TO.ZS,
+         diabetes_20_79 = SH.STA.DIAB.ZS,
+         death_by_ncd = SH.DTH.NCOM.ZS,
+         death_by_cvd_ca_dm_30_70 = SH.DYN.NCOM.ZS)
 
 wb_countries <- wbcountries() %>% 
   select(iso3c,
@@ -65,7 +68,8 @@ caricom_tidycovid19 <- tidycovid19 %>%
          lat = ifelse(country == "Dominica", 15.41500, lat),
          long = ifelse(country == "Dominica", -61.3710, long),
          lat = ifelse(country == "Saint Kitts and Nevis", 17.35782, lat),
-         long = ifelse(country == "Saint Kitts and Nevis", -62.7830, long)) 
+         long = ifelse(country == "Saint Kitts and Nevis", -62.7830, long)) %>% 
+  rename(lng = long)
 
 caricom_today <- caricom_tidycovid19 %>% 
   filter(date == max(date))
