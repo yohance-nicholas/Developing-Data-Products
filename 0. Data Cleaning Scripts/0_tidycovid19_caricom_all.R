@@ -68,7 +68,9 @@ caricom_tidycovid19 <- tidycovid19 %>%
          lat = ifelse(country == "Dominica", 15.41500, lat),
          long = ifelse(country == "Dominica", -61.3710, long),
          lat = ifelse(country == "Saint Kitts and Nevis", 17.35782, lat),
-         long = ifelse(country == "Saint Kitts and Nevis", -62.7830, long)) %>% 
+         long = ifelse(country == "Saint Kitts and Nevis", -62.7830, long),
+         lat = as.numeric(lat),
+         long = as.numeric(long)) %>% 
   rename(lng = long)
 
 caricom_today <- caricom_tidycovid19 %>% 
