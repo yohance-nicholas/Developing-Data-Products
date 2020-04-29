@@ -61,7 +61,11 @@ caricom_tidycovid19 <- tidycovid19 %>%
          confirmed_per_100k = confirmed/population*100000,
          deaths_per_100k = deaths/population*100000,
          mortality_rate = deaths/confirmed*100,
-         recovery_rate = recovered/confirmed*100) 
+         recovery_rate = recovered/confirmed*100,
+         lat = ifelse(country == "Dominica", 15.41500, lat),
+         long = ifelse(country == "Dominica", -61.3710, long),
+         lat = ifelse(country == "Saint Kitts and Nevis", 17.35782, lat),
+         long = ifelse(country == "Saint Kitts and Nevis", -62.7830, long)) 
 
 caricom_today <- caricom_tidycovid19 %>% 
   filter(date == max(date))
