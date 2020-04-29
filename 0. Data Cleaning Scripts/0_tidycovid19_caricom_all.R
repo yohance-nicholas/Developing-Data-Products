@@ -9,17 +9,19 @@ tidycovid19 <- readRDS(gzcon(url("https://raw.githubusercontent.com/joachim-gass
 
 # Add Spatial Coordinates
 library(wbstats)
-series <- c("SP.POP.0014.TO.ZS", "SP.POP.1564.TO.ZS", "SP.POP.65UP.TO.ZS", "SH.STA.DIAB.ZS", "SH.DTH.NCOM.ZS", "SH.DYN.NCOM.ZS")
+series <- c("ST.INT.ARVL","SP.POP.0014.TO.ZS", "SP.POP.1564.TO.ZS", "SP.POP.65UP.TO.ZS", "SH.STA.DIAB.ZS", "SH.DTH.NCOM.ZS", "SH.DYN.NCOM.ZS")
 wb_data <- wb(indicator = series,
               mrv = 1) %>% 
   select(iso3c, value, indicatorID) %>% 
   spread(indicatorID, value) %>% 
-  rename(pop_0_14_2018 = SP.POP.0014.TO.ZS,
+  rename(tourist_arrivals = ST.INT.ARVL,
+         pop_0_14_2018 = SP.POP.0014.TO.ZS,
          pop_15_64_2018 = SP.POP.1564.TO.ZS,
          pop_65_over_2018 = SP.POP.65UP.TO.ZS,
          diabetes_20_79 = SH.STA.DIAB.ZS,
          death_by_ncd = SH.DTH.NCOM.ZS,
          death_by_cvd_ca_dm_30_70 = SH.DYN.NCOM.ZS)
+
 
 wb_countries <- wbcountries() %>% 
   select(iso3c,
@@ -150,6 +152,9 @@ caricom_covid_regression_data <- data.frame(caricom_today %>%
                                                      pop_0_14_2018,
                                                      pop_15_64_2018,
                                                      pop_65_over_2018,
+                                                     diabetes_20_79,
+                                                     death_by_ncd,
+                                                     death_by_cvd_ca_dm_30_70,
                                                      gdp_capita))
 
 # Export Data Set ---------------------------------------------------------
