@@ -32,11 +32,12 @@ wb_data <- wb_data %>%  left_join(wb_countries,
 
 tidycovid19 <- tidycovid19 %>%  left_join(wb_data,
                                           by = "iso3c")%>% 
-  unite(popup, 
-        c("country","confirmed"), 
-        sep = ",", 
-        remove = FALSE) %>% 
-  select(-popup,popup)
+  mutate(confirmed_logratio = difference(log(confirmed)),
+         confirmed_per_100k = confirmed/population*100000,
+         deaths_per_100k = deaths/population*100000,
+         mortality_rate = deaths/confirmed*100,
+         recovery_rate = recovered/confirmed*100)
+  
 
 # Create Aggregate Variables
 commodity <- c("GUY", "JAM", "TTO") # To create variable which identifies type of economy
@@ -61,11 +62,6 @@ caricom_tidycovid19 <- tidycovid19 %>%
            country == "Trinidad and Tobago") %>% 
   mutate(economy = if_else(iso3c %in% commodity, "Commodity Based", "Service Based" ),
          oecs = if_else(iso3c %in% oecs, "OECS Member State", "Non-OECS Member State" ),
-         confirmed_logratio = difference(log(confirmed)),
-         confirmed_per_100k = confirmed/population*100000,
-         deaths_per_100k = deaths/population*100000,
-         mortality_rate = deaths/confirmed*100,
-         recovery_rate = recovered/confirmed*100,
          lat = ifelse(country == "Dominica", 15.41500, lat),
          long = ifelse(country == "Dominica", -61.3710, long),
          lat = ifelse(country == "Saint Kitts and Nevis", 17.35782, lat),
@@ -77,6 +73,9 @@ caricom_tidycovid19 <- tidycovid19 %>%
   filter(date >= as.Date("2020-03-07")) 
 
 caricom_today <- caricom_tidycovid19 %>% 
+  filter(date == max(date))
+
+world_today <- tidycovid19 %>% 
   filter(date == max(date))
 
 caricom <- caricom_today %>% pull(iso3c)
@@ -160,20 +159,61 @@ caricom_covid_regression_data <- data.frame(caricom_today %>%
                                                      income,
                                                      oecs,
                                                      economy)) %>% 
-  mutate(income = case_when(income == "Low income"  ~ 0, income == "Upper middle income"  ~ 1, income == "High income"  ~ 2),
-         oecs = if_else(oecs == "OECS Member State", 1, 0),
-         economy = if_else(economy == "Commodity Based", 1, 0)) 
+  mutate(income = case_when(income == "Low income"  ~ 1, income == "Upper middle income"  ~ 2, income == "High income"  ~ 3),
+         oecs = if_else(oecs == "OECS Member State", 1, 2),
+         economy = if_else(economy == "Commodity Based", 1, 2)) %>% 
+  column_to_rownames(var = "country")
+
+
+# Clean Data for Multiple Regression Model
+world_covid_regression_data <- data.frame(world_today %>% 
+                                              select(country,
+                                                     confirmed,
+                                                     confirmed_per_100k,
+                                                     deaths,
+                                                     deaths_per_100k,
+                                                     mortality_rate,
+                                                     population,
+                                                     pop_density,
+                                                     pop_0_14_2018,
+                                                     pop_15_64_2018,
+                                                     pop_65_over_2018,
+                                                     diabetes_20_79,
+                                                     death_by_ncd,
+                                                     death_by_cvd_ca_dm_30_70,
+                                                     tourist_arrivals,
+                                                     gdp_capita,
+                                                     region,
+                                                     income)) %>% 
+  mutate(income = case_when(income == "Low income"  ~ 1, 
+                            income == "Lower middle income"  ~ 2, 
+                            income == "Upper middle income"  ~ 3, 
+                            income == "High income"  ~ 4),
+         region = case_when(region == "East Asia & Pacific"  ~ 1, 
+                            region == "Europe & Central Asia"  ~ 2, 
+                            region == "Middle East & North Africa"  ~ 4, 
+                            region == "North America	" ~ 5, 
+                            region == "South Asia"  ~ 6, 
+                            region == "Sub-Saharan Africa "  ~ 7,
+                            region == "Latin America & Caribbean" ~ 3)) %>% 
+  column_to_rownames(var = "country") %>% 
+  na.omit()
 
 # Export Data Set ---------------------------------------------------------
 # Time Series 
 write.csv(caricom_tidycovid19, "caricom_tidycovid19.csv")
 saveRDS(caricom_tidycovid19, "caricom_tidycovid19.Rds")
+saveRDS(tidycovid19, "world_tidycovid19.Rds")
 
 # Cross Sectional
 write.csv(caricom_today, "caricom_today.csv")
 saveRDS(caricom_today, "caricom_today.Rds")
+saveRDS(world_today, "caricom_today.Rds")
+
+# Regression Data
 write.csv(caricom_covid_regression_data, "caricom_covid_regression_data.csv")
 saveRDS(caricom_covid_regression_data, "caricom_covid_regression_data.rds")
+saveRDS(world_covid_regression_data, "world_covid_regression_data.rds")
 
 # Remove Unrequired Objects from the Environment --------------------------
 rm("series", "wb_countries", "wb_data", "tidycovid19")
