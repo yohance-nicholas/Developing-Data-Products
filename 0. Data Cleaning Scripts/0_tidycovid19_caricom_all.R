@@ -221,7 +221,7 @@ saveRDS(tidycovid19, "world_tidycovid19.Rds")
 # Cross Sectional
 write.csv(caricom_today, "caricom_today.csv")
 saveRDS(caricom_today, "caricom_today.Rds")
-saveRDS(world_today, "caricom_today.Rds")
+saveRDS(world_today, "world_today.Rds")
 
 # Regression Data
 write.csv(caricom_covid_regression_data, "caricom_covid_regression_data.csv")
