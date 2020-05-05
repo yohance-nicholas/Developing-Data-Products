@@ -5,7 +5,7 @@
 library(tidyverse)
 library(tsibble)
 library(tidyr)
-tidycovid19 <- readRDS(gzcon(url("https://raw.githubusercontent.com/joachim-gassen/tidycovid19/master/cached_data/merged.RDS")))
+tidycovid19 <- readRDS(gzcon(url("https://git.io/JfYa7")))
 
 # Add Spatial Coordinates
 library(wbstats)
@@ -21,7 +21,6 @@ wb_data <- wb(indicator = series,
          diabetes_20_79 = SH.STA.DIAB.ZS,
          death_by_ncd = SH.DTH.NCOM.ZS,
          death_by_cvd_ca_dm_30_70 = SH.DYN.NCOM.ZS)
-
 
 wb_countries <- wbcountries() %>% 
   select(iso3c,
@@ -74,7 +73,8 @@ caricom_tidycovid19 <- tidycovid19 %>%
          lat = as.numeric(lat),
          long = as.numeric(long)) %>% 
   mutate_at(35:37, round, 2) %>% 
-  rename(lng = long)
+  rename(lng = long)%>%
+  filter(date >= as.Date("2020-03-07")) 
 
 caricom_today <- caricom_tidycovid19 %>% 
   filter(date == max(date))
@@ -155,18 +155,19 @@ caricom_covid_regression_data <- data.frame(caricom_today %>%
                                                      diabetes_20_79,
                                                      death_by_ncd,
                                                      death_by_cvd_ca_dm_30_70,
+                                                     tourist_arrivals,
                                                      gdp_capita))
 
 # Export Data Set ---------------------------------------------------------
 # Time Series 
-write.csv(caricom_tidycovid19, sprintf("caricom_tidycovid19_%s.csv", Sys.Date()))
-saveRDS(caricom_tidycovid19, sprintf("caricom_tidycovid19_%s.rds", Sys.Date()))
+write.csv(caricom_tidycovid19, "caricom_tidycovid19.csv")
+saveRDS(caricom_tidycovid19, "caricom_tidycovid19.Rds")
 
 # Cross Sectional
-write.csv(caricom_today, sprintf("tidycovid19_caricom_today_%s.csv", Sys.Date()))
-saveRDS(caricom_today, sprintf("caricom_tidycovid19_today_%s.rds", Sys.Date()))
-write.csv(caricom_covid_regression_data, sprintf("caricom_covid_regression_data_%s.csv", Sys.Date()))
-saveRDS(caricom_covid_regression_data, sprintf("caricom_covid_regression_data_%s.rds", Sys.Date()))
+write.csv(caricom_today, "caricom_today.csv")
+saveRDS(caricom_today, "caricom_today.Rds")
+write.csv(caricom_covid_regression_data, "caricom_covid_regression_data.csv")
+saveRDS(caricom_covid_regression_data, "caricom_covid_regression_data.rds")
 
 # Remove Unrequired Objects from the Environment --------------------------
 rm("series", "wb_countries", "wb_data", "tidycovid19", "caricom_covid_regression_data")
