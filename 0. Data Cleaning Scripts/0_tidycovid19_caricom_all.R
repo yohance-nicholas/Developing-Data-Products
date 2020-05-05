@@ -229,4 +229,4 @@ saveRDS(caricom_covid_regression_data, "caricom_covid_regression_data.rds")
 saveRDS(world_covid_regression_data, "world_covid_regression_data.rds")
 
 # Remove Unrequired Objects from the Environment --------------------------
-rm("series", "wb_countries", "wb_data", "tidycovid19", "world_covid_regression_data", "caricom_covid_regression_data", "world_today")
+rm("series", "wb_countries", "wb_data", "tidycovid19", "caricom_covid_regression_data")
