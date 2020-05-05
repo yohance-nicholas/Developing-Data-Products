@@ -156,7 +156,13 @@ caricom_covid_regression_data <- data.frame(caricom_today %>%
                                                      death_by_ncd,
                                                      death_by_cvd_ca_dm_30_70,
                                                      tourist_arrivals,
-                                                     gdp_capita))
+                                                     gdp_capita,
+                                                     income,
+                                                     oecs,
+                                                     economy)) %>% 
+  mutate(income = case_when(income == "Low income"  ~ 0, income == "Upper middle income"  ~ 1, income == "High income"  ~ 2),
+         oecs = if_else(oecs == "OECS Member State", 1, 0),
+         economy = if_else(economy == "Commodity Based", 1, 0)) 
 
 # Export Data Set ---------------------------------------------------------
 # Time Series 
@@ -170,4 +176,4 @@ write.csv(caricom_covid_regression_data, "caricom_covid_regression_data.csv")
 saveRDS(caricom_covid_regression_data, "caricom_covid_regression_data.rds")
 
 # Remove Unrequired Objects from the Environment --------------------------
-rm("series", "wb_countries", "wb_data", "tidycovid19", "caricom_covid_regression_data")
+rm("series", "wb_countries", "wb_data", "tidycovid19")
