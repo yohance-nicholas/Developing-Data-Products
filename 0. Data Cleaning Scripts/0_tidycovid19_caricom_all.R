@@ -5,6 +5,7 @@
 library(tidyverse)
 library(tsibble)
 library(tidyr)
+library(sjmisc)
 tidycovid19 <- readRDS(gzcon(url("https://git.io/JfYa7")))
 
 # Add Spatial Coordinates
@@ -36,9 +37,16 @@ tidycovid19 <- tidycovid19 %>%  left_join(wb_data,
          confirmed_per_100k = confirmed/population*100000,
          deaths_per_100k = deaths/population*100000,
          mortality_rate = deaths/confirmed*100,
-         recovery_rate = recovered/confirmed*100)
-  
+         recovery_rate = recovered/confirmed*100) 
 
+# Create Dummy Variables
+tidycovid19 <- tidycovid19 %>% 
+  select(region, income) %>% 
+  to_dummy(region, income) %>% 
+  bind_cols(tidycovid19) %>% 
+  select(-contains("region"), contains("region")) %>% 
+  select(-contains("income"), contains("income"))
+  
 # Create Aggregate Variables
 commodity <- c("GUY", "JAM", "TTO") # To create variable which identifies type of economy
 oecs <- c("ATG", "DMA", "GRD", "KNA", "LCA", "VCT") # To create variable which identifies OECS Member States
@@ -158,12 +166,13 @@ caricom_covid_regression_data <- data.frame(caricom_today %>%
                                                      gdp_capita,
                                                      income,
                                                      oecs,
-                                                     economy)) %>% 
+                                                     economy,
+                                                     contains("region"),
+                                                     contains("income"))) %>% 
   mutate(income = case_when(income == "Low income"  ~ 1, income == "Upper middle income"  ~ 2, income == "High income"  ~ 3),
          oecs = if_else(oecs == "OECS Member State", 1, 2),
          economy = if_else(economy == "Commodity Based", 1, 2)) %>% 
   column_to_rownames(var = "country")
-
 
 # Clean Data for Multiple Regression Model
 world_covid_regression_data <- data.frame(world_today %>% 
@@ -184,7 +193,9 @@ world_covid_regression_data <- data.frame(world_today %>%
                                                      tourist_arrivals,
                                                      gdp_capita,
                                                      region,
-                                                     income)) %>% 
+                                                     income,
+                                                     contains("region"),
+                                                     contains("income"))) %>% 
   mutate(income = case_when(income == "Low income"  ~ 1, 
                             income == "Lower middle income"  ~ 2, 
                             income == "Upper middle income"  ~ 3, 
@@ -216,4 +227,4 @@ saveRDS(caricom_covid_regression_data, "caricom_covid_regression_data.rds")
 saveRDS(world_covid_regression_data, "world_covid_regression_data.rds")
 
 # Remove Unrequired Objects from the Environment --------------------------
-rm("series", "wb_countries", "wb_data", "tidycovid19")
+rm("series", "wb_countries", "wb_data", "tidycovid19", "world_covid_regression_data", "caricom_covid_regression_data", "world_today")
