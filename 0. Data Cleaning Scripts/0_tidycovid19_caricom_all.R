@@ -50,30 +50,18 @@ tidycovid19 <- tidycovid19 %>%
 # Create Aggregate Variables
 commodity <- c("GUY", "JAM", "TTO") # To create variable which identifies type of economy
 oecs <- c("ATG", "DMA", "GRD", "KNA", "LCA", "VCT") # To create variable which identifies OECS Member States
+caricom <- c("ATG","BHS","BLZ","BRB","DMA","GRD","GUY","HTI","JAM","KNA","LCA","SUR","TTO","VCT") # To create variable which identifies CARICOM Member States
+
 
 # Create Filtered Dataset
 caricom_tidycovid19 <- tidycovid19 %>% 
-  filter(country == "Antigua and Barbuda"|
-           country == "Bahamas"|
-           country == "Barbados"|
-           country == "Belize" |
-           country == "Dominica"|
-           country == "Grenada"|
-           country == "Guyana"|
-           country == "Haiti"|
-           country == "Jamaica"|
-           country == "Montserrat"|
-           country == "Saint Kitts and Nevis"|
-           country == "Saint Lucia"|
-           country == "Saint Vincent and the Grenadines"|
-           country == "Suriname"|
-           country == "Trinidad and Tobago") %>% 
+  filter(iso3c %in% caricom) %>% 
   mutate(economy = if_else(iso3c %in% commodity, "Commodity Based", "Service Based" ),
          oecs = if_else(iso3c %in% oecs, "OECS Member State", "Non-OECS Member State" ),
-         lat = ifelse(country == "Dominica", 15.41500, lat),
-         long = ifelse(country == "Dominica", -61.3710, long),
-         lat = ifelse(country == "Saint Kitts and Nevis", 17.35782, lat),
-         long = ifelse(country == "Saint Kitts and Nevis", -62.7830, long),
+         lat = ifelse(iso3c == "DMA", 15.41500, lat),
+         long = ifelse(iso3c == "DMA", -61.3710, long),
+         lat = ifelse(iso3c == "KNA", 17.35782, lat),
+         long = ifelse(iso3c == "KNA", -62.7830, long),
          lat = as.numeric(lat),
          long = as.numeric(long)) %>% 
   mutate_at(35:37, round, 2) %>% 
