@@ -1,6 +1,6 @@
 # CARICOM Covid Data Cleaning Script
 # Prepared by Yohance Nicholas
-# April 2020
+# Version: May 15th 2020
 
 library(tidyverse)
 library(tsibble)
@@ -33,7 +33,8 @@ wb_data <- wb_data %>%  left_join(wb_countries,
 
 tidycovid19 <- tidycovid19 %>%  left_join(wb_data,
                                           by = "iso3c")%>% 
-  mutate(confirmed_logratio = difference(log(confirmed)),
+  mutate(active = confirmed - deaths - recovered,
+         confirmed_logratio = difference(log(confirmed)),
          confirmed_per_100k = confirmed/population*100000,
          deaths_per_100k = deaths/population*100000,
          mortality_rate = deaths/confirmed*100,
@@ -217,4 +218,4 @@ saveRDS(caricom_covid_regression_data, "caricom_covid_regression_data.rds")
 saveRDS(world_covid_regression_data, "world_covid_regression_data.rds")
 
 # Remove Unrequired Objects from the Environment --------------------------
-rm("series", "wb_countries", "wb_data", "tidycovid19", "caricom_covid_regression_data")
+rm("series", "wb_countries", "wb_data", "tidycovid19")
