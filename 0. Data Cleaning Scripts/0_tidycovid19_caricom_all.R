@@ -6,7 +6,8 @@ library(tidyverse)
 library(tsibble)
 library(tidyr)
 library(sjmisc)
-tidycovid19 <- readRDS(gzcon(url("https://git.io/JfYa7")))
+tidycovid19 <- readRDS(gzcon(url("https://git.io/JfYa7"))) %>% 
+  drop_na(confirmed)
 
 # Add Spatial Coordinates
 library(wbstats)
@@ -67,8 +68,7 @@ caricom_tidycovid19 <- tidycovid19 %>%
          long = as.numeric(long)) %>% 
   mutate_at(35:37, round, 2) %>% 
   rename(lng = long)%>%
-  filter(date >= as.Date("2020-03-07")) %>% 
-  drop_na(confirmed)
+  filter(date >= as.Date("2020-03-07")) 
 
 caricom_today <- caricom_tidycovid19 %>% 
   filter(date == max(date))
