@@ -67,7 +67,8 @@ caricom_tidycovid19 <- tidycovid19 %>%
          long = as.numeric(long)) %>% 
   mutate_at(35:37, round, 2) %>% 
   rename(lng = long)%>%
-  filter(date >= as.Date("2020-03-07")) 
+  filter(date >= as.Date("2020-03-07")) %>% 
+  drop_na(confirmed)
 
 caricom_today <- caricom_tidycovid19 %>% 
   filter(date == max(date))
