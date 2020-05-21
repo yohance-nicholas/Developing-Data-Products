@@ -163,16 +163,12 @@ caricom_covid_regression_data <- data.frame(caricom_today %>%
                                                      economy,
                                                      contains("region"),
                                                      contains("income"))) %>% 
-  mutate(log_confirmed = log(confirmed),
-         log_confirmed_per_100k = log(confirmed_per_100k),
-         log_deaths = log(deaths),
-         log_deaths_per_100k = log(deaths_per_100k),
-         log_recovered = log(recovered),
-         log_active = log(active),
-         income = case_when(income == "Low income"  ~ 1, income == "Upper middle income"  ~ 2, income == "High income"  ~ 3),
+  mutate(income = case_when(income == "Low income"  ~ 1, income == "Upper middle income"  ~ 2, income == "High income"  ~ 3),
          oecs = if_else(oecs == "OECS Member State", 1, 2),
          economy = if_else(economy == "Commodity Based", 1, 2)) %>% 
   column_to_rownames(var = "country")
+
+caricom_covid_regression_data$log_deaths %>% rmis.infinite()
 
 # Clean Data for Multiple Regression Model
 world_covid_regression_data <- data.frame(world_today %>% 
@@ -198,7 +194,9 @@ world_covid_regression_data <- data.frame(world_today %>%
                                                      income,
                                                      contains("region"),
                                                      contains("income"))) %>% 
-  mutate(log_confirmed = log(confirmed),
+  mutate(deaths = if_else(deaths == 0, 0.01, deaths),
+         deaths_per_100k = if_else(deaths_per_100k == 0, 0.01, deaths_per_100k),
+         log_confirmed = log(confirmed),
          log_confirmed_per_100k = log(confirmed_per_100k),
          log_deaths = log(deaths),
          log_deaths_per_100k = log(deaths_per_100k),

@@ -42,7 +42,7 @@ server <- function(input, output) {
   
   output$mymap <- renderLeaflet({
     leaflet() %>% 
-      addProviderTiles(providers$CartoDB.DarkMatter) %>% 
+      addProviderTiles(providers$CartoDB.VoyagerLabelsUnder) %>% 
       addMarkers(lat = caricom_today$lat, 
                  lng = caricom_today$lng,
                  popupOptions = markerClusterOptions,
