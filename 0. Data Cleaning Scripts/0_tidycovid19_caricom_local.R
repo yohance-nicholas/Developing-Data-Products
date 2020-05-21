@@ -168,8 +168,6 @@ caricom_covid_regression_data <- data.frame(caricom_today %>%
          economy = if_else(economy == "Commodity Based", 1, 2)) %>% 
   column_to_rownames(var = "country")
 
-caricom_covid_regression_data$log_deaths %>% rmis.infinite()
-
 # Clean Data for Multiple Regression Model
 world_covid_regression_data <- data.frame(world_today %>% 
                                               select(country,
@@ -194,8 +192,8 @@ world_covid_regression_data <- data.frame(world_today %>%
                                                      income,
                                                      contains("region"),
                                                      contains("income"))) %>% 
-  mutate(deaths = if_else(deaths == 0, 0.01, deaths),
-         deaths_per_100k = if_else(deaths_per_100k == 0, 0.01, deaths_per_100k),
+  mutate(deaths = if_else(deaths == 0, 0.01, deaths), # To prevent 0 values from becoming infinity when transformed
+         deaths_per_100k = if_else(deaths_per_100k == 0, 0.01, deaths_per_100k), # To prevent 0 values from becoming infinity when transformed
          log_confirmed = log(confirmed),
          log_confirmed_per_100k = log(confirmed_per_100k),
          log_deaths = log(deaths),

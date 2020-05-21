@@ -5,8 +5,8 @@ account: yohance-nicholas
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 2246175
-bundleId: 3107074
+bundleId: 3175961
 url: https://yohance-nicholas.shinyapps.io/covid19_regression_map/
-when: 1588699488.87864
+when: 1590087121.30496
 asMultiple: FALSE
 asStatic: FALSE
