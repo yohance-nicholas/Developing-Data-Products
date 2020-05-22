@@ -214,19 +214,19 @@ world_covid_regression_data <- data.frame(world_today %>%
 
 # Export Data Set ---------------------------------------------------------
 # Time Series 
-write.csv(caricom_tidycovid19, "1. Tidy Data/caricom_tidycovid19.csv")
-saveRDS(caricom_tidycovid19, "1. Tidy Data/caricom_tidycovid19.Rds")
-saveRDS(tidycovid19, "1. Tidy Data/world_tidycovid19.Rds")
+write.csv(caricom_tidycovid19, "caricom_tidycovid19.csv")
+saveRDS(caricom_tidycovid19, "caricom_tidycovid19.Rds")
+saveRDS(tidycovid19, "world_tidycovid19.Rds")
 
 # Cross Sectional
-write.csv(caricom_today, "1. Tidy Data/caricom_today.csv")
-saveRDS(caricom_today, "1. Tidy Data/caricom_today.Rds")
-saveRDS(world_today, "1. Tidy Data/world_today.Rds")
+write.csv(caricom_today, "caricom_today.csv")
+saveRDS(caricom_today, "caricom_today.Rds")
+saveRDS(world_today, "world_today.Rds")
 
 # Regression Data
-write.csv(caricom_covid_regression_data, "1. Tidy Data/caricom_covid_regression_data.csv")
-saveRDS(caricom_covid_regression_data, "1. Tidy Data/caricom_covid_regression_data.rds")
-saveRDS(world_covid_regression_data, "1. Tidy Data/world_covid_regression_data.rds")
+write.csv(caricom_covid_regression_data, "caricom_covid_regression_data.csv")
+saveRDS(caricom_covid_regression_data, "caricom_covid_regression_data.rds")
+saveRDS(world_covid_regression_data, "world_covid_regression_data.rds")
 
 # Remove Unrequired Objects from the Environment --------------------------
 rm("series", "wb_countries", "wb_data", "tidycovid19")
