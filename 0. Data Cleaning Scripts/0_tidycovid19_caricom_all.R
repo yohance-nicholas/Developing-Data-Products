@@ -11,7 +11,7 @@ tidycovid19 <- readRDS(gzcon(url("https://git.io/JfYa7")))%>%
 
 # Add Spatial Coordinates
 library(wbstats)
-series <- c("ST.INT.ARVL","SP.POP.0014.TO.ZS", "SP.POP.1564.TO.ZS", "SP.POP.65UP.TO.ZS", "SH.STA.DIAB.ZS", "SH.DTH.NCOM.ZS", "SH.DYN.NCOM.ZS", "NY.GDP.PCAP.KD")
+series <- c("ST.INT.ARVL","SP.POP.0014.TO.ZS", "SP.POP.1564.TO.ZS", "SP.POP.65UP.TO.ZS", "SH.STA.DIAB.ZS", "SH.DTH.NCOM.ZS", "SH.DYN.NCOM.ZS")
 wb_data <- wb(indicator = series,
               mrv = 1) %>% 
   select(iso3c, value, indicatorID) %>% 
@@ -22,8 +22,7 @@ wb_data <- wb(indicator = series,
          pop_65_over_2018 = SP.POP.65UP.TO.ZS,
          diabetes_20_79 = SH.STA.DIAB.ZS,
          death_by_ncd = SH.DTH.NCOM.ZS,
-         death_by_cvd_ca_dm_30_70 = SH.DYN.NCOM.ZS,
-         gdp_capita = NY.GDP.PCAP.KD)
+         death_by_cvd_ca_dm_30_70 = SH.DYN.NCOM.ZS)
 
 wb_countries <- wbcountries() %>% 
   select(iso3c,
