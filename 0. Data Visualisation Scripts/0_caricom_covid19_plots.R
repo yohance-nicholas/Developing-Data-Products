@@ -468,3 +468,17 @@ caricom_slider <- caricom_slider %>% layout(
   yaxis = list(title = "Confirmed Cases"))
 
 caricom_slider
+
+
+# Cumulative Plots --------------------------------------------------------
+
+library(plotly)
+cum_plot <- tidycovid19_cases %>% filter(iso3c == "DMA",
+                                         date >= as.Date("2020-03-07")) %>% 
+  ggplot(aes(x = date, y = value, fill = cases)) +
+  geom_area() +
+  labs(x = "Date",
+       y = "Total Confirmed Cases",
+       title = "Disaggregation of Confirmed Cases")
+cum_plot
+ggplotly(cum_plot)

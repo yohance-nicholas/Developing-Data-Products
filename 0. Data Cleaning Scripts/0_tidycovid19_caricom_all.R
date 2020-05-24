@@ -9,6 +9,17 @@ library(sjmisc)
 tidycovid19 <- readRDS(gzcon(url("https://git.io/JfYa7")))%>% 
   drop_na(confirmed)
 
+tidycovid19_cases <- tidycovid19 %>% 
+  select(iso3c,
+         country,
+         date,
+         confirmed,
+         deaths,
+         recovered) %>% 
+  mutate(active = confirmed - deaths - recovered) %>% 
+  select(-confirmed) %>% 
+  gather(cases, value, deaths, recovered, active)
+  
 # Add Spatial Coordinates
 library(wbstats)
 series <- c("ST.INT.ARVL","SP.POP.0014.TO.ZS", "SP.POP.1564.TO.ZS", "SP.POP.65UP.TO.ZS", "SH.STA.DIAB.ZS", "SH.DTH.NCOM.ZS", "SH.DYN.NCOM.ZS")
@@ -69,6 +80,9 @@ caricom_tidycovid19 <- tidycovid19 %>%
   mutate_at(35:37, round, 2) %>% 
   rename(lng = long)%>%
   filter(date >= as.Date("2020-03-07")) 
+
+caricom_tidycovid19_cases <- tidycovid19_cases %>% 
+  filter(iso3c %in% caricom)
 
 caricom_today <- caricom_tidycovid19 %>% 
   filter(date == max(date))
