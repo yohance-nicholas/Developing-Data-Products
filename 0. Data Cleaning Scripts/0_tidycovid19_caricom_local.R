@@ -7,7 +7,7 @@ library(tidyverse)
 library(tsibble)
 library(tidyr)
 library(sjmisc)
-tidycovid19 <- readRDS(gzcon(url("https://git.io/JfYa7")))%>% 
+tidycovid19 <- readRDS(gzcon(url("https://git.io/JfYa7"))) %>% 
   drop_na(confirmed)
 
 # Add Spatial Coordinates
