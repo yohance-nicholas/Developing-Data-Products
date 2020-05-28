@@ -96,6 +96,12 @@ by_income <- group_by(caricom_today, income)
 by_oecs <- group_by(caricom_today, oecs)
 
 # List Top N Countries ----------------------------------------------------
+caricom_totals <- caricom_today %>%
+  filter(date == max(date))  %>%
+  summarise(total_confirmed = sum(confirmed, na.rm = T),
+            total_deaths = sum(deaths, na.rm = T),
+            total_recovered = sum(recovered, na.rm = T))
+
 top_5 <- caricom_today %>%
   filter(date == max(date)) %>%
   group_by(`iso3c`) %>%
@@ -243,4 +249,4 @@ saveRDS(caricom_covid_regression_data, "caricom_covid_regression_data.rds")
 saveRDS(world_covid_regression_data, "world_covid_regression_data.rds")
 
 # Remove Unrequired Objects from the Environment --------------------------
-rm("series", "wb_countries", "wb_data", "tidycovid19")
+rm("series", "wb_countries", "wb_data", "tidycovid19", "tidycovid19_cases")

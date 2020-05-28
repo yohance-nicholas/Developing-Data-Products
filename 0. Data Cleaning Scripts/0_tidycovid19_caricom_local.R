@@ -7,8 +7,19 @@ library(tidyverse)
 library(tsibble)
 library(tidyr)
 library(sjmisc)
-tidycovid19 <- readRDS(gzcon(url("https://git.io/JfYa7"))) %>% 
+tidycovid19 <- readRDS(gzcon(url("https://git.io/JfYa7")))%>% 
   drop_na(confirmed)
+
+tidycovid19_cases <- tidycovid19 %>% 
+  select(iso3c,
+         country,
+         date,
+         confirmed,
+         deaths,
+         recovered) %>% 
+  mutate(active = confirmed - deaths - recovered) %>% 
+  select(-confirmed) %>% 
+  gather(cases, value, deaths, recovered, active)
 
 # Add Spatial Coordinates
 library(wbstats)
@@ -49,7 +60,7 @@ tidycovid19 <- tidycovid19 %>%
   bind_cols(tidycovid19) %>% 
   select(-contains("region"), contains("region")) %>% 
   select(-contains("income"), contains("income"))
-  
+
 # Create Aggregate Variables
 commodity <- c("GUY", "JAM", "TTO") # To create variable which identifies type of economy
 oecs <- c("ATG", "DMA", "GRD", "KNA", "LCA", "VCT") # To create variable which identifies OECS Member States
@@ -71,6 +82,9 @@ caricom_tidycovid19 <- tidycovid19 %>%
   rename(lng = long)%>%
   filter(date >= as.Date("2020-03-07")) 
 
+caricom_tidycovid19_cases <- tidycovid19_cases %>% 
+  filter(iso3c %in% caricom)
+
 caricom_today <- caricom_tidycovid19 %>% 
   filter(date == max(date))
 
@@ -83,6 +97,12 @@ by_income <- group_by(caricom_today, income)
 by_oecs <- group_by(caricom_today, oecs)
 
 # List Top N Countries ----------------------------------------------------
+caricom_totals <- caricom_today %>%
+  filter(date == max(date))  %>%
+  summarise(total_confirmed = sum(confirmed, na.rm = T),
+            total_deaths = sum(deaths, na.rm = T),
+            total_recovered = sum(recovered, na.rm = T))
+
 top_5 <- caricom_today %>%
   filter(date == max(date)) %>%
   group_by(`iso3c`) %>%
@@ -169,28 +189,28 @@ caricom_covid_regression_data <- data.frame(caricom_today %>%
 
 # Clean Data for Multiple Regression Model
 world_covid_regression_data <- data.frame(world_today %>% 
-                                              select(country,
-                                                     confirmed,
-                                                     confirmed_per_100k,
-                                                     deaths,
-                                                     recovered,
-                                                     active,
-                                                     deaths_per_100k,
-                                                     mortality_rate,
-                                                     population,
-                                                     pop_density,
-                                                     pop_0_14_2018,
-                                                     pop_15_64_2018,
-                                                     pop_65_over_2018,
-                                                     diabetes_20_79,
-                                                     death_by_ncd,
-                                                     death_by_cvd_ca_dm_30_70,
-                                                     tourist_arrivals,
-                                                     gdp_capita,
-                                                     region,
-                                                     income,
-                                                     contains("region"),
-                                                     contains("income"))) %>% 
+                                            select(country,
+                                                   confirmed,
+                                                   confirmed_per_100k,
+                                                   deaths,
+                                                   recovered,
+                                                   active,
+                                                   deaths_per_100k,
+                                                   mortality_rate,
+                                                   population,
+                                                   pop_density,
+                                                   pop_0_14_2018,
+                                                   pop_15_64_2018,
+                                                   pop_65_over_2018,
+                                                   diabetes_20_79,
+                                                   death_by_ncd,
+                                                   death_by_cvd_ca_dm_30_70,
+                                                   tourist_arrivals,
+                                                   gdp_capita,
+                                                   region,
+                                                   income,
+                                                   contains("region"),
+                                                   contains("income"))) %>% 
   mutate(deaths = if_else(deaths == 0, 0.01, deaths), # To prevent 0 values from becoming infinity when transformed
          deaths_per_100k = if_else(deaths_per_100k == 0, 0.01, deaths_per_100k), # To prevent 0 values from becoming infinity when transformed
          log_confirmed = log(confirmed),
@@ -215,19 +235,19 @@ world_covid_regression_data <- data.frame(world_today %>%
 
 # Export Data Set ---------------------------------------------------------
 # Time Series 
-write.csv(caricom_tidycovid19, "1. Tidy Data/caricom_tidycovid19.csv")
-saveRDS(caricom_tidycovid19, "1. Tidy Data/caricom_tidycovid19.Rds")
-saveRDS(tidycovid19, "1. Tidy Data/world_tidycovid19.Rds")
+write.csv(caricom_tidycovid19, "caricom_tidycovid19.csv")
+saveRDS(caricom_tidycovid19, "caricom_tidycovid19.Rds")
+saveRDS(tidycovid19, "world_tidycovid19.Rds")
 
 # Cross Sectional
-write.csv(caricom_today, "1. Tidy Data/caricom_today.csv")
-saveRDS(caricom_today, "1. Tidy Data/caricom_today.Rds")
-saveRDS(world_today, "1. Tidy Data/world_today.Rds")
+write.csv(caricom_today, "caricom_today.csv")
+saveRDS(caricom_today, "caricom_today.Rds")
+saveRDS(world_today, "world_today.Rds")
 
 # Regression Data
-write.csv(caricom_covid_regression_data, "1. Tidy Data/caricom_covid_regression_data.csv")
-saveRDS(caricom_covid_regression_data, "1. Tidy Data/caricom_covid_regression_data.rds")
-saveRDS(world_covid_regression_data, "1. Tidy Data/world_covid_regression_data.rds")
+write.csv(caricom_covid_regression_data, "caricom_covid_regression_data.csv")
+saveRDS(caricom_covid_regression_data, "caricom_covid_regression_data.rds")
+saveRDS(world_covid_regression_data, "world_covid_regression_data.rds")
 
 # Remove Unrequired Objects from the Environment --------------------------
-rm("series", "wb_countries", "wb_data", "tidycovid19")
+rm("series", "wb_countries", "wb_data", "tidycovid19", "tidycovid19_cases")
