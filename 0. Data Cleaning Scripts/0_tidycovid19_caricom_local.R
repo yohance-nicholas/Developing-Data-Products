@@ -101,7 +101,8 @@ caricom_totals <- caricom_today %>%
   filter(date == max(date))  %>%
   summarise(total_confirmed = sum(confirmed, na.rm = T),
             total_deaths = sum(deaths, na.rm = T),
-            total_recovered = sum(recovered, na.rm = T))
+            total_recovered = sum(recovered, na.rm = T),
+            total_active = sum(active, na.rm = T))
 
 top_5 <- caricom_today %>%
   filter(date == max(date)) %>%
