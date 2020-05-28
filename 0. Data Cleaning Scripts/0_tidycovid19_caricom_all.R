@@ -1,6 +1,6 @@
 # CARICOM Covid Data Cleaning Script
 # Prepared by Yohance Nicholas
-# Version: May 22nd 2020
+# Version: May 28th 2020
 
 library(tidyverse)
 library(tsibble)

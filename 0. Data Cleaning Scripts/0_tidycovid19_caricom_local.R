@@ -1,6 +1,6 @@
 # CARICOM Covid Data Cleaning Script For Loca Data Refresh
 # Prepared by Yohance Nicholas
-# Version: May 15th 2020
+# Version: May 28th 2020
 
 setwd("~/GitHub/Developing-Data-Products")
 library(tidyverse)
