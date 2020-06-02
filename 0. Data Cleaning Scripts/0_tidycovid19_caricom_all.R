@@ -6,6 +6,7 @@ library(tidyverse)
 library(tsibble)
 library(tidyr)
 library(sjmisc)
+library(zoo) # for rollmean()
 tidycovid19 <- readRDS(gzcon(url("https://git.io/JfYa7")))%>% 
   drop_na(confirmed)
 
@@ -50,7 +51,8 @@ tidycovid19 <- tidycovid19 %>%  left_join(wb_data,
          confirmed_per_100k = confirmed/population*100000,
          deaths_per_100k = deaths/population*100000,
          mortality_rate = deaths/confirmed*100,
-         recovery_rate = recovered/confirmed*100) 
+         recovery_rate = recovered/confirmed*100,new_cases = confirmed - lag(confirmed),
+         ave_new_cases = rollmean(new_cases, 7, na.pad=TRUE, align="right")) 
 
 # Create Dummy Variables
 tidycovid19 <- tidycovid19 %>% 
