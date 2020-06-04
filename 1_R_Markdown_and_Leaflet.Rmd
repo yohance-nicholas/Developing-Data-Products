@@ -176,7 +176,7 @@ caricom_table <- caricom_covid %>%
 library(broom)
 library(knitr)
 kable(caricom_table,
-      caption = "Table 1: Confirmed COVID-19 Cases and Deaths per 100,000 by CARICOM Memember State as at April 8th 2020")
+      caption = "Table 1: Confirmed COVID-19 Cases and Deaths per 100,000 by CARICOM Memember State as at June 3rd 2020")
 ```
 
 ### Mapping COVID-19 Cases across CARICOM Member States
