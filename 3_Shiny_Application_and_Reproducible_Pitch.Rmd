@@ -47,7 +47,7 @@ This app allows for rudimentary exploratory data analysis of the COVID-19 pandem
 ## Mapping the Pandemic with Leaflet() 
 
 ```{r message=FALSE, warning=FALSE}
-source("https://git.io/JfYVv", local = T)
+source("https://git.io/Jfqjv", local = T)
 library(leaflet)
 library(leaflet.extras)
 caricom_covid_map <- leaflet() %>% 
