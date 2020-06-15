@@ -79,8 +79,7 @@ caricom_tidycovid19 <- tidycovid19 %>%
          lat = ifelse(iso3c == "KNA", 17.35782, lat),
          long = ifelse(iso3c == "KNA", -62.7830, long),
          lat = as.numeric(lat),
-         long = as.numeric(long)) %>% 
-  mutate_at(35:37, round, 2) %>% 
+         long = as.numeric(long)) %>%
   rename(lng = long)%>%
   filter(date >= as.Date("2020-03-07")) 
 
