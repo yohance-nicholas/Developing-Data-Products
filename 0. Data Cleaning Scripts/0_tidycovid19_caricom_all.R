@@ -51,7 +51,8 @@ tidycovid19 <- tidycovid19 %>%  left_join(wb_data,
          confirmed_per_100k = confirmed/population*100000,
          deaths_per_100k = deaths/population*100000,
          mortality_rate = deaths/confirmed*100,
-         recovery_rate = recovered/confirmed*100,new_cases = confirmed - lag(confirmed),
+         recovery_rate = recovered/confirmed*100,
+         new_cases = confirmed - lag(confirmed),
          ave_new_cases = rollmean(new_cases, 7, na.pad=TRUE, align="right")) 
 
 # Create Dummy Variables
@@ -158,6 +159,11 @@ top_6_recovery <- caricom_today %>%
   top_n(6) %>%
   select(`iso3c`) %>%
   pull()
+
+
+by_economy_type <- group_by(caricom_today, economy)
+by_income <- group_by(caricom_today, income)
+by_oecs <- group_by(caricom_today, oecs)
 
 # Clean Data for Multiple Regression Model
 caricom_covid_regression_data <- data.frame(caricom_today %>% 
