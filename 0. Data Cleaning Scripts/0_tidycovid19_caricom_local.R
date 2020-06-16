@@ -8,6 +8,13 @@ library(tsibble)
 library(tidyr)
 library(sjmisc)
 library(zoo) # for rollmean()
+
+# Create ISO3C Variables --------------------------------------------------
+commodity <- c("GUY", "JAM", "TTO") # To create variable which identifies type of economy
+oecs <- c("ATG", "DMA", "GRD", "KNA", "LCA", "VCT") # To create variable which identifies OECS Member States
+caricom <- c("ATG","BHS","BLZ","BRB","DMA","GRD","GUY","HTI","JAM","KNA","LCA","SUR","TTO","VCT") # To create variable which identifies CARICOM Member States
+
+# Import COVID-19 Data ----------------------------------------------------
 tidycovid19 <- readRDS(gzcon(url("https://git.io/JfYa7"))) %>% 
   drop_na(confirmed)
 
@@ -63,17 +70,12 @@ tidycovid19 <- tidycovid19 %>%
   select(-contains("region"), contains("region")) %>% 
   select(-contains("income"), contains("income"))
 
-# Create Aggregate Variables
-commodity <- c("GUY", "JAM", "TTO") # To create variable which identifies type of economy
-oecs <- c("ATG", "DMA", "GRD", "KNA", "LCA", "VCT") # To create variable which identifies OECS Member States
-caricom <- c("ATG","BHS","BLZ","BRB","DMA","GRD","GUY","HTI","JAM","KNA","LCA","SUR","TTO","VCT") # To create variable which identifies CARICOM Member States
-
-
 # Create Filtered Dataset
 caricom_tidycovid19 <- tidycovid19 %>% 
   filter(iso3c %in% caricom) %>% 
   mutate(economy = if_else(iso3c %in% commodity, "Commodity Based", "Service Based" ),
          oecs = if_else(iso3c %in% oecs, "OECS Member State", "Non-OECS Member State" ),
+         caricom = if_else(iso3c %in% caricom, "CARICOM Member State", "Non-CARICOM Member State" ),
          lat = ifelse(iso3c == "DMA", 15.41500, lat),
          long = ifelse(iso3c == "DMA", -61.3710, long),
          lat = ifelse(iso3c == "KNA", 17.35782, lat),
@@ -84,7 +86,8 @@ caricom_tidycovid19 <- tidycovid19 %>%
   filter(date >= as.Date("2020-03-07"))  
 
 caricom_tidycovid19_cases <- tidycovid19_cases %>% 
-  filter(iso3c %in% caricom) 
+  filter(iso3c %in% caricom) %>%
+  filter(date >= as.Date("2020-03-07")) 
 
 caricom_today <- caricom_tidycovid19 %>% 
   filter(date == max(date)) %>% 
@@ -97,8 +100,10 @@ caricom <- caricom_today %>% pull(iso3c)
 by_economy_type <- group_by(caricom_today, economy)
 by_income <- group_by(caricom_today, income)
 by_oecs <- group_by(caricom_today, oecs)
+by_caricom <- group_by(caricom_tidycovid19, caricom)
 
-# List Top N Countries ----------------------------------------------------
+# Create Objects for Totals -----------------------------------------------
+
 caricom_totals <- caricom_today %>%
   filter(date == max(date))  %>%
   summarise(total_confirmed = sum(confirmed, na.rm = T),
@@ -106,6 +111,14 @@ caricom_totals <- caricom_today %>%
             total_recovered = sum(recovered, na.rm = T),
             total_active = sum(active, na.rm = T))
 
+caricom_totals_ts <- caricom_tidycovid19 %>% 
+  group_by(date, caricom) %>% 
+  summarise(total_confirmed = sum(confirmed),
+            total_active = sum(active),
+            total_deaths = sum(deaths),
+            total_recovered = sum(recovered)) 
+
+# List Top N Countries ----------------------------------------------------
 top_5 <- caricom_today %>%
   filter(date == max(date)) %>%
   group_by(`iso3c`) %>%
