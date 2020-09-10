@@ -107,7 +107,7 @@ Once the dataframe of confirmed COVID-19 cases and deaths has been created, one 
 # Import Relevant Socio-Economic Data from the World Development Indicators Database
 
 library(wbstats)
-series <- c("NY.GDP.PCAP.KD", "SP.POP.TOTL", "SP.POP.0014.TO.ZS", "SP.POP.1564.TO.ZS", "SP.POP.65UP.TO.ZS")
+series <- c("NY.GDP.PCAP.KD", "SP.POP.TOTL", "SP.POP.0014.TO.ZS", "SP.POP.1564.TO.ZS", "SP.POP.65UP.TO.ZS", "SH.STA.DIAB.ZS", "SH.DTH.NCOM.ZS", "SH.DYN.NCOM.ZS")
 
 wb_data <- wb(indicator = series,
               mrv = 1) %>% 
@@ -117,7 +117,10 @@ wb_data <- wb(indicator = series,
          pop_2018 = SP.POP.TOTL,
          pop_0_14_2018 = SP.POP.0014.TO.ZS,
          pop_15_64_2018 = SP.POP.1564.TO.ZS,
-         pop_65_over_2018 = SP.POP.65UP.TO.ZS)
+         pop_65_over_2018 = SP.POP.65UP.TO.ZS,
+         diabetes_20_79 = SH.STA.DIAB.ZS,
+         death_by_ncd = SH.DTH.NCOM.ZS,
+         death_by_cvd_ca_dm_30_70 = SH.DYN.NCOM.ZS)
 ```
 ### Merging the COVID-19 cases with the World Bank Data
 
@@ -181,26 +184,38 @@ kable(caricom_table,
 
 ### Mapping COVID-19 Cases across CARICOM Member States
 
+```{r message=FALSE, warning=FALSE, include=FALSE}
+source("https://git.io/Jfqjv", local = T)
+```
+
 Now that the clean dataset is complete, I use leaflet to depict the situation across CARICOM Member States. The markers identify the country and the total number of confirmed cases, while the yellow and red circles provide an illustration of the confirmed cases and deaths per 100,000 persons.
 
 ```{r}
 library(leaflet)
+library(leaflet.extras)
 caricom_covid_map <- leaflet() %>% 
   addProviderTiles(providers$CartoDB.DarkMatter) %>% 
-  addMarkers(lat = caricom_covid$lat, 
-             lng = caricom_covid$lng,
+  addMarkers(lat = caricom_today$lat, 
+             lng = caricom_today$lng,
              popupOptions = markerClusterOptions,
-             popup = caricom_covid$popup) %>% 
-  addCircleMarkers(lat = caricom_covid$lat, 
-                   lng = caricom_covid$lng,
+             popup = paste("<b>", caricom_today$country, "</b> <br>",
+                           "Date: ", caricom_today$date, "<br>",
+                           "Confirmed Cases: ", caricom_today$confirmed, "<br>",
+                           "Deaths:", caricom_today$deaths,"<br>",
+                           "Recovered", caricom_today$recovered,"<br>",
+                           "Income Group:", caricom_today$income, "<br>",
+                           "Population Aged 65+:", caricom_today$pop_65_over_2018,"<br>",
+                           "Diabetes prev. (% pop 20-79):", caricom_today$diabetes_20_79)) %>% 
+  addCircleMarkers(lat = caricom_today$lat, 
+                   lng = caricom_today$lng,
                    weight = 1,
-                   radius = caricom_covid$confirmed_per_100k,
+                   radius = log(caricom_today$confirmed_per_100k)*8,
                    color = 'yellow') %>% 
-  addCircleMarkers(lat = caricom_covid$lat, 
-                   lng = caricom_covid$lng,
+  addCircleMarkers(lat = caricom_today$lat, 
+                   lng = caricom_today$lng,
                    weight = 1,
-                   radius = caricom_covid$deaths_per_100k,
-                   color = 'red') %>% 
+                   radius = caricom_today$deaths_per_100k,
+                   color = 'red') %>%
   addLegend("bottomright", 
             colors= c('red', 'yellow'), 
             labels= c('Deaths per 100,000', 'Confirmed Cases per 100,000'), 

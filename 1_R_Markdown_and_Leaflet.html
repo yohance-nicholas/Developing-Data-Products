@@ -5238,7 +5238,7 @@ covid_19_confirmed_and_deaths &lt;- covid_19_confirmed %&gt;%
 <pre class="r"><code># Import Relevant Socio-Economic Data from the World Development Indicators Database
 
 library(wbstats)
-series &lt;- c(&quot;NY.GDP.PCAP.KD&quot;, &quot;SP.POP.TOTL&quot;, &quot;SP.POP.0014.TO.ZS&quot;, &quot;SP.POP.1564.TO.ZS&quot;, &quot;SP.POP.65UP.TO.ZS&quot;)
+series &lt;- c(&quot;NY.GDP.PCAP.KD&quot;, &quot;SP.POP.TOTL&quot;, &quot;SP.POP.0014.TO.ZS&quot;, &quot;SP.POP.1564.TO.ZS&quot;, &quot;SP.POP.65UP.TO.ZS&quot;, &quot;SH.STA.DIAB.ZS&quot;, &quot;SH.DTH.NCOM.ZS&quot;, &quot;SH.DYN.NCOM.ZS&quot;)
 
 wb_data &lt;- wb(indicator = series,
               mrv = 1) %&gt;% 
@@ -5248,7 +5248,10 @@ wb_data &lt;- wb(indicator = series,
          pop_2018 = SP.POP.TOTL,
          pop_0_14_2018 = SP.POP.0014.TO.ZS,
          pop_15_64_2018 = SP.POP.1564.TO.ZS,
-         pop_65_over_2018 = SP.POP.65UP.TO.ZS)</code></pre>
+         pop_65_over_2018 = SP.POP.65UP.TO.ZS,
+         diabetes_20_79 = SH.STA.DIAB.ZS,
+         death_by_ncd = SH.DTH.NCOM.ZS,
+         death_by_cvd_ca_dm_30_70 = SH.DYN.NCOM.ZS)</code></pre>
 </div>
 <div id="merging-the-covid-19-cases-with-the-world-bank-data" class="section level3">
 <h3>Merging the COVID-19 cases with the World Bank Data</h3>
@@ -5314,86 +5317,86 @@ kable(caricom_table,
 <tbody>
 <tr class="odd">
 <td align="left">Antigua and Barbuda</td>
-<td align="right">96.78947</td>
-<td align="right">3.0890257</td>
+<td align="right">97.81915</td>
+<td align="right">3.089026</td>
 <td align="right">15703.028</td>
 </tr>
 <tr class="even">
 <td align="left">Bahamas</td>
-<td align="right">453.16600</td>
-<td align="right">7.4457870</td>
+<td align="right">698.62022</td>
+<td align="right">16.175330</td>
 <td align="right">27477.960</td>
 </tr>
 <tr class="odd">
 <td align="left">Barbados</td>
-<td align="right">56.09267</td>
-<td align="right">2.4388120</td>
+<td align="right">62.71231</td>
+<td align="right">2.438812</td>
 <td align="right">16099.828</td>
 </tr>
 <tr class="even">
 <td align="left">Belize</td>
-<td align="right">182.65519</td>
-<td align="right">2.5617838</td>
+<td align="right">349.68349</td>
+<td align="right">4.611211</td>
 <td align="right">4149.862</td>
 </tr>
 <tr class="odd">
 <td align="left">Dominica</td>
-<td align="right">27.85205</td>
-<td align="right">0.0000000</td>
+<td align="right">30.63725</td>
+<td align="right">0.000000</td>
 <td align="right">7055.470</td>
 </tr>
 <tr class="even">
 <td align="left">Grenada</td>
 <td align="right">21.42800</td>
-<td align="right">0.0000000</td>
+<td align="right">0.000000</td>
 <td align="right">9330.041</td>
 </tr>
 <tr class="odd">
 <td align="left">Guyana</td>
-<td align="right">131.45691</td>
-<td align="right">3.9603151</td>
+<td align="right">217.56183</td>
+<td align="right">6.132101</td>
 <td align="right">4159.609</td>
 </tr>
 <tr class="even">
 <td align="left">Haiti</td>
-<td align="right">72.00519</td>
-<td align="right">1.7401994</td>
+<td align="right">74.43792</td>
+<td align="right">1.900014</td>
 <td align="right">714.483</td>
 </tr>
 <tr class="odd">
 <td align="left">Jamaica</td>
-<td align="right">54.67597</td>
-<td align="right">0.5426895</td>
+<td align="right">116.57648</td>
+<td align="right">1.288887</td>
 <td align="right">4866.987</td>
 </tr>
 <tr class="even">
 <td align="left">Saint Kitts and Nevis</td>
 <td align="right">32.18295</td>
-<td align="right">0.0000000</td>
+<td align="right">0.000000</td>
 <td align="right">17241.592</td>
 </tr>
 <tr class="odd">
 <td align="left">Saint Lucia</td>
-<td align="right">14.22397</td>
-<td align="right">0.0000000</td>
+<td align="right">14.77105</td>
+<td align="right">0.000000</td>
 <td align="right">9350.748</td>
 </tr>
 <tr class="even">
 <td align="left">Saint Vincent and the Grenadines</td>
-<td align="right">52.44645</td>
-<td align="right">0.0000000</td>
+<td align="right">56.06344</td>
+<td align="right">0.000000</td>
 <td align="right">6852.500</td>
 </tr>
 <tr class="odd">
 <td align="left">Suriname</td>
-<td align="right">624.72909</td>
-<td align="right">10.3204145</td>
+<td align="right">764.91472</td>
+<td align="right">15.824635</td>
 <td align="right">7966.683</td>
 </tr>
 <tr class="even">
 <td align="left">Trinidad and Tobago</td>
-<td align="right">78.78289</td>
-<td align="right">1.0752896</td>
+<td align="right">185.52330</td>
+<td align="right">2.795753</td>
 <td align="right">15105.119</td>
 </tr>
 </tbody>
@@ -5403,29 +5406,37 @@ kable(caricom_table,
 <h3>Mapping COVID-19 Cases across CARICOM Member States</h3>
 <p>Now that the clean dataset is complete, I use leaflet to depict the situation across CARICOM Member States. The markers identify the country and the total number of confirmed cases, while the yellow and red circles provide an illustration of the confirmed cases and deaths per 100,000 persons.</p>
 <pre class="r"><code>library(leaflet)
+library(leaflet.extras)
 caricom_covid_map &lt;- leaflet() %&gt;% 
   addProviderTiles(providers$CartoDB.DarkMatter) %&gt;% 
-  addMarkers(lat = caricom_covid$lat, 
-             lng = caricom_covid$lng,
+  addMarkers(lat = caricom_today$lat, 
+             lng = caricom_today$lng,
              popupOptions = markerClusterOptions,
-             popup = caricom_covid$popup) %&gt;% 
-  addCircleMarkers(lat = caricom_covid$lat, 
-                   lng = caricom_covid$lng,
+             popup = paste(&quot;&lt;b&gt;&quot;, caricom_today$country, &quot;&lt;/b&gt; &lt;br&gt;&quot;,
+                           &quot;Date: &quot;, caricom_today$date, &quot;&lt;br&gt;&quot;,
+                           &quot;Confirmed Cases: &quot;, caricom_today$confirmed, &quot;&lt;br&gt;&quot;,
+                           &quot;Deaths:&quot;, caricom_today$deaths,&quot;&lt;br&gt;&quot;,
+                           &quot;Recovered&quot;, caricom_today$recovered,&quot;&lt;br&gt;&quot;,
+                           &quot;Income Group:&quot;, caricom_today$income, &quot;&lt;br&gt;&quot;,
+                           &quot;Population Aged 65+:&quot;, caricom_today$pop_65_over_2018,&quot;&lt;br&gt;&quot;,
+                           &quot;Diabetes prev. (% pop 20-79):&quot;, caricom_today$diabetes_20_79)) %&gt;% 
+  addCircleMarkers(lat = caricom_today$lat, 
+                   lng = caricom_today$lng,
                    weight = 1,
-                   radius = caricom_covid$confirmed_per_100k,
+                   radius = log(caricom_today$confirmed_per_100k)*8,
                    color = &#39;yellow&#39;) %&gt;% 
-  addCircleMarkers(lat = caricom_covid$lat, 
-                   lng = caricom_covid$lng,
+  addCircleMarkers(lat = caricom_today$lat, 
+                   lng = caricom_today$lng,
                    weight = 1,
-                   radius = caricom_covid$deaths_per_100k,
-                   color = &#39;red&#39;) %&gt;% 
+                   radius = caricom_today$deaths_per_100k,
+                   color = &#39;red&#39;) %&gt;%
   addLegend(&quot;bottomright&quot;, 
             colors= c(&#39;red&#39;, &#39;yellow&#39;), 
             labels= c(&#39;Deaths per 100,000&#39;, &#39;Confirmed Cases per 100,000&#39;), 
             title=&quot;Legend&quot;) 
 caricom_covid_map </code></pre>
-<div id="htmlwidget-cc0455d87f4736392fd9" style="width:672px;height:480px;" class="leaflet html-widget"></div>
-<script type="application/json" data-for="htmlwidget-cc0455d87f4736392fd9">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addProviderTiles","args":["CartoDB.DarkMatter",null,null,{"errorTileUrl":"","noWrap":false,"detectRetina":false}]},{"method":"addMarkers","args":[[17.0608,25.025885,13.1939,17.1899,15.415,12.1165,4.860416,18.9712,18.1096,17.357822,13.9094,12.9843,3.9193,10.6918],[-61.7964,-78.035889,-59.5432,-88.4976,-61.371,-61.679,-58.93018,-72.2852,-77.2975,-62.782998,-60.9789,-61.2872,-56.0278,-61.2225],null,null,null,{"interactive":true,"draggable":false,"keyboard":true,"title":"","alt":"","zIndexOffset":0,"opacity":1,"riseOnHover":false,"riseOffset":250},["Antigua and Barbuda,94","Bahamas,1765","Barbados,161","Belize,713","Dominica,20","Grenada,24","Guyana,1029","Haiti,8110","Jamaica,1612","Saint Kitts and Nevis,17","Saint Lucia,26","Saint Vincent and the Grenadines,58","Suriname,3632","Trinidad and Tobago,1099"],["function (showCoverageOnHover = TRUE, zoomToBoundsOnClick = TRUE, ","    spiderfyOnMaxZoom = TRUE, removeOutsideVisibleBounds = TRUE, ","    spiderLegPolylineOptions = list(weight = 1.5, color = \"#222\", ","        opacity = 0.5), freezeAtZoom = FALSE, ...) ","{","    filterNULL(list(showCoverageOnHover = showCoverageOnHover, ","        zoomToBoundsOnClick = zoomToBoundsOnClick, spiderfyOnMaxZoom = spiderfyOnMaxZoom, ","        removeOutsideVisibleBounds = removeOutsideVisibleBounds, ","        spiderLegPolylineOptions = spiderLegPolylineOptions, ","        freezeAtZoom = freezeAtZoom, ...))","}"],null,null,null,{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]},{"method":"addCircleMarkers","args":[[17.0608,25.025885,13.1939,17.1899,15.415,12.1165,4.860416,18.9712,18.1096,17.357822,13.9094,12.9843,3.9193,10.6918],[-61.7964,-78.035889,-59.5432,-88.4976,-61.371,-61.679,-58.93018,-72.2852,-77.2975,-62.782998,-60.9789,-61.2872,-56.0278,-61.2225],[96.7894726003419,453.16599996919,56.0926748541068,182.655186459435,27.8520499108734,21.4279974643536,131.456910494324,72.0051900559678,54.6759651986803,32.1829506086364,14.2239728650364,52.4464458490447,624.729089120219,78.7828868372363],null,null,{"interactive":true,"className":"","stroke":true,"color":"yellow","weight":1,"opacity":0.5,"fill":true,"fillColor":"yellow","fillOpacity":0.2},null,null,null,null,null,{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]},{"method":"addCircleMarkers","args":[[17.0608,25.025885,13.1939,17.1899,15.415,12.1165,4.860416,18.9712,18.1096,17.357822,13.9094,12.9843,3.9193,10.6918],[-61.7964,-78.035889,-59.5432,-88.4976,-61.371,-61.679,-58.93018,-72.2852,-77.2975,-62.782998,-60.9789,-61.2872,-56.0278,-61.2225],[3.08902572128751,7.4457869683323,2.43881195017856,2.56178382131045,0,0,3.96031508777847,1.7401994144229,0.542689480880202,0,0,0,10.320414467845,1.07528962926164],null,null,{"interactive":true,"className":"","stroke":true,"color":"red","weight":1,"opacity":0.5,"fill":true,"fillColor":"red","fillOpacity":0.2},null,null,null,null,null,{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]},{"method":"addLegend","args":[{"colors":["red","yellow"],"labels":["Deaths per 100,000","Confirmed Cases per 100,000"],"na_color":null,"na_label":"NA","opacity":0.5,"position":"bottomright","type":"unknown","title":"Legend","extra":null,"layerId":null,"className":"info legend","group":null}]}],"limits":{"lat":[3.9193,25.025885],"lng":[-88.4976,-56.0278]}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-cabf3aad90a0369997a0" style="width:672px;height:480px;" class="leaflet html-widget"></div>
+<script type="application/json" data-for="htmlwidget-cabf3aad90a0369997a0">{"x":{"options":{"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addProviderTiles","args":["CartoDB.DarkMatter",null,null,{"errorTileUrl":"","noWrap":false,"detectRetina":false}]},{"method":"addMarkers","args":[[17.1175,25.0661,17.2534,13.0935,15.415,12.0653,6.80461,18.5392,17.9927,17.35782,14,5.8232,10.6596,13.2035],[-61.8456,-77.339,-88.7713,-59.6105,-61.371,-61.7449,-58.1548,-72.3288,-76.792,-62.783,-60.9832,-55.1679,-61.4789,-61.2653],null,null,null,{"interactive":true,"draggable":false,"keyboard":true,"title":"","alt":"","zIndexOffset":0,"opacity":1,"riseOnHover":false,"riseOffset":250},["<b> Antigua & Barbuda <\/b> <br> Date:  2020-09-08 <br> Confirmed Cases:  95 <br> Deaths: 3 <br> Recovered 91 <br> Income Group: High income <br> Population Aged 65+: 9.05496406433411 <br> Diabetes prev. (% pop 20-79): 13.1","<b> Bahamas <\/b> <br> Date:  2020-09-08 <br> Confirmed Cases:  2585 <br> Deaths: 59 <br> Recovered 976 <br> Income Group: High income <br> Population Aged 65+: 7.48327265444873 <br> Diabetes prev. (% pop 20-79): 8.8","<b> Belize <\/b> <br> Date:  2020-09-08 <br> Confirmed Cases:  1361 <br> Deaths: 16 <br> Recovered 321 <br> Income Group: Upper middle income <br> Population Aged 65+: 4.86738926048986 <br> Diabetes prev. (% pop 20-79): 17.1","<b> Barbados <\/b> <br> Date:  2020-09-08 <br> Confirmed Cases:  180 <br> Deaths: 7 <br> Recovered 156 <br> Income Group: High income <br> Population Aged 65+: 16.2309903318526 <br> Diabetes prev. (% pop 20-79): 13.4","<b> Dominica <\/b> <br> Date:  2020-09-08 <br> Confirmed Cases:  22 <br> Deaths: 0 <br> Recovered 18 <br> Income Group: Upper middle income <br> Population Aged 65+: NA <br> Diabetes prev. (% pop 20-79): 11.6","<b> Grenada <\/b> <br> Date:  2020-09-08 <br> Confirmed Cases:  24 <br> Deaths: 0 <br> Recovered 24 <br> Income Group: Upper middle income <br> Population Aged 65+: 9.67741935483871 <br> Diabetes prev. (% pop 20-79): 10.7","<b> Guyana <\/b> <br> Date:  2020-09-08 <br> Confirmed Cases:  1613 <br> Deaths: 48 <br> Recovered 1030 <br> Income Group: Upper middle income <br> Population Aged 65+: 6.71158430488805 <br> Diabetes prev. (% pop 20-79): 11.6","<b> Haiti <\/b> <br> Date:  2020-09-08 <br> Confirmed Cases:  8376 <br> Deaths: 214 <br> Recovered 5991 <br> Income Group: Low income <br> Population Aged 65+: 5.0636695460752 <br> Diabetes prev. (% pop 20-79): 6.7","<b> Jamaica <\/b> <br> Date:  2020-09-08 <br> Confirmed Cases:  3323 <br> Deaths: 36 <br> Recovered 992 <br> Income Group: Upper middle income <br> Population Aged 65+: 8.92239167324395 <br> Diabetes prev. (% pop 20-79): 11.3","<b> St. Kitts & Nevis <\/b> <br> Date:  2020-09-08 <br> Confirmed Cases:  17 <br> Deaths: 0 <br> Recovered 17 <br> Income Group: High income <br> Population Aged 65+: NA <br> Diabetes prev. (% pop 20-79): 13.3","<b> St. Lucia <\/b> <br> Date:  2020-09-08 <br> Confirmed Cases:  26 <br> Deaths: 0 <br> Recovered 26 <br> Income Group: Upper middle income <br> Population Aged 65+: 10.0350128562832 <br> Diabetes prev. (% pop 20-79): 11.6","<b> Suriname <\/b> <br> Date:  2020-09-08 <br> Confirmed Cases:  4419 <br> Deaths: 91 <br> Recovered 3595 <br> Income Group: Upper middle income <br> Population Aged 65+: 7.01512972760986 <br> Diabetes prev. (% pop 20-79): 12.5","<b> Trinidad & Tobago <\/b> <br> Date:  2020-09-08 <br> Confirmed Cases:  2391 <br> Deaths: 39 <br> Recovered 743 <br> Income Group: High income <br> Population Aged 65+: 11.1182080226642 <br> Diabetes prev. (% pop 20-79): 11","<b> St. Vincent & Grenadines <\/b> <br> Date:  2020-09-08 <br> Confirmed Cases:  62 <br> Deaths: 0 <br> Recovered 58 <br> Income Group: Upper middle income <br> Population Aged 65+: 9.7405709428605 <br> Diabetes prev. (% pop 20-79): 11.6"],["function (showCoverageOnHover = TRUE, zoomToBoundsOnClick = TRUE, ","    spiderfyOnMaxZoom = TRUE, removeOutsideVisibleBounds = TRUE, ","    spiderLegPolylineOptions = list(weight = 1.5, color = \"#222\", ","        opacity = 0.5), freezeAtZoom = FALSE, ...) ","{","    filterNULL(list(showCoverageOnHover = showCoverageOnHover, ","        zoomToBoundsOnClick = zoomToBoundsOnClick, spiderfyOnMaxZoom = spiderfyOnMaxZoom, ","        removeOutsideVisibleBounds = removeOutsideVisibleBounds, ","        spiderLegPolylineOptions = spiderLegPolylineOptions, ","        freezeAtZoom = freezeAtZoom, ...))","}"],null,null,null,{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]},{"method":"addCircleMarkers","args":[[17.1175,25.0661,17.2534,13.0935,15.415,12.0653,6.80461,18.5392,17.9927,17.35782,14,5.8232,10.6596,13.2035],[-61.8456,-77.339,-88.7713,-59.6105,-61.371,-61.7449,-58.1548,-72.3288,-76.792,-62.783,-60.9832,-55.1679,-61.4789,-61.2653],[36.6649627485617,51.9826665742511,46.8327498455381,33.1084617351874,27.3777339910898,24.5175868774831,42.6254997068955,34.4720864477576,37.7985325206191,27.7714946249621,21.2394301686485,53.0675845101479,41.1520545137357,32.2118715551656],null,null,{"interactive":true,"className":"","stroke":true,"color":"yellow","weight":1,"opacity":0.5,"fill":true,"fillColor":"yellow","fillOpacity":0.2},null,null,null,null,null,{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]},{"method":"addCircleMarkers","args":[[17.1175,25.0661,17.2534,13.0935,15.415,12.0653,6.80461,18.5392,17.9927,17.35782,14,5.8232,10.6596,13.2035],[-61.8456,-77.339,-88.7713,-59.6105,-61.371,-61.7449,-58.1548,-72.3288,-76.792,-62.783,-60.9832,-55.1679,-61.4789,-61.2653],[3.08902572128751,15.1483252114347,4.09885411409673,2.43881195017856,0,0,6.13210078107634,1.90001364635969,1.22105133198045,0,0,15.652628609565,2.79575303608027,0],null,null,{"interactive":true,"className":"","stroke":true,"color":"red","weight":1,"opacity":0.5,"fill":true,"fillColor":"red","fillOpacity":0.2},null,null,null,null,null,{"interactive":false,"permanent":false,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":false,"className":"","sticky":true},null]},{"method":"addLegend","args":[{"colors":["red","yellow"],"labels":["Deaths per 100,000","Confirmed Cases per 100,000"],"na_color":null,"na_label":"NA","opacity":0.5,"position":"bottomright","type":"unknown","title":"Legend","extra":null,"layerId":null,"className":"info legend","group":null}]}],"limits":{"lat":[5.8232,25.0661],"lng":[-88.7713,-55.1679]}},"evals":[],"jsHooks":[]}</script>
 </div>
 </div>
 <div class="footnotes">
