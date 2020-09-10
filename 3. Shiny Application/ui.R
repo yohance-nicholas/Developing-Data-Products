@@ -14,7 +14,7 @@ library(shinythemes)
 library(leaflet)
 library(leaflet.extras)
 
-ui <- fluidPage(theme = shinytheme("cosmo",)w
+ui <- fluidPage(theme = shinytheme("cosmo"),
   titlePanel("COVID-19 Bivariate Regression Model (Published May 5th 2020, Data Refreshed weekly)"),
   sidebarLayout(
     sidebarPanel(

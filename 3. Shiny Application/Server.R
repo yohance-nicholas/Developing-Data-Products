@@ -57,7 +57,7 @@ server <- function(input, output) {
       addCircleMarkers(lat = caricom_today$lat, 
                        lng = caricom_today$lng,
                        weight = 1,
-                       radius = caricom_today$confirmed_per_100k,
+                       radius = log(caricom_today$confirmed_per_100k)*8,
                        color = 'yellow') %>% 
       addCircleMarkers(lat = caricom_today$lat, 
                        lng = caricom_today$lng,
