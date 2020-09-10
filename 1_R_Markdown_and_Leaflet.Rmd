@@ -223,3 +223,6 @@ caricom_covid_map <- leaflet() %>%
 caricom_covid_map 
 ```
 
+**Developer**
+
+Yohance Nicholas | Consultant Economist @ [Kairi Consultants Limited](http://www.kairi.com) | [LinkedIn](https://www.linkedin.com/in/yohance-nicholas/) | [GitHub](https://yohance-nicholas.github.io/Developing-Data-Products/)
