@@ -32,7 +32,7 @@ tidycovid19_cases <- tidycovid19 %>%
 # Add Spatial Coordinates
 library(wbstats)
 series <- c("ST.INT.ARVL","SP.POP.0014.TO.ZS", "SP.POP.1564.TO.ZS", "SP.POP.65UP.TO.ZS", "SH.STA.DIAB.ZS", "SH.DTH.NCOM.ZS", "SH.DYN.NCOM.ZS")
-wb_data <- wb(indicator = series,
+wb_data <- wb_data(indicator = series,
               mrv = 1) %>% 
   select(iso3c, value, indicatorID) %>% 
   spread(indicatorID, value) %>% 
@@ -44,7 +44,7 @@ wb_data <- wb(indicator = series,
          death_by_ncd = SH.DTH.NCOM.ZS,
          death_by_cvd_ca_dm_30_70 = SH.DYN.NCOM.ZS)
 
-wb_countries <- wbcountries() %>% 
+wb_countries <- wb_countries() %>% 
   select(iso3c,
          lat,
          long) 
