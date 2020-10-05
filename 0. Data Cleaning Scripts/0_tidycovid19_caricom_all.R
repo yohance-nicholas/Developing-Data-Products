@@ -34,9 +34,7 @@ tidycovid19_cases <- tidycovid19 %>%
 library(wbstats)
 series <- c("ST.INT.ARVL","SP.POP.0014.TO.ZS", "SP.POP.1564.TO.ZS", "SP.POP.65UP.TO.ZS", "SH.STA.DIAB.ZS", "SH.DTH.NCOM.ZS", "SH.DYN.NCOM.ZS")
 wb_data <- wb_data(indicator = series,
-              mrv = 1) %>% 
-  select(iso3c, value, indicatorID) %>% 
-  spread(indicatorID, value) %>% 
+              mrv = 1) %>%  
   rename(tourist_arrivals = ST.INT.ARVL,
          pop_0_14_2018 = SP.POP.0014.TO.ZS,
          pop_15_64_2018 = SP.POP.1564.TO.ZS,
@@ -47,11 +45,15 @@ wb_data <- wb_data(indicator = series,
 
 wb_countries <- wb_countries() %>% 
   select(iso3c,
-         lat,
-         long) 
+         latitude,
+         longitude) %>% 
+  rename(lat = latitude,
+         long = longitude)
 
 wb_data <- wb_data %>%  left_join(wb_countries,
-                                  by = "iso3c")
+                                  by = "iso3c") %>% 
+  select(-country,
+         -date)
 
 tidycovid19 <- tidycovid19 %>%  left_join(wb_data,
                                           by = "iso3c")%>% 
@@ -84,8 +86,8 @@ caricom_tidycovid19 <- tidycovid19 %>%
          long = ifelse(iso3c == "KNA", -62.7830, long),
          lat = as.numeric(lat),
          long = as.numeric(long)) %>%
-  rename(lng = long)%>%
-  filter(date >= as.Date("2020-03-07")) 
+  rename(lng = long) %>%
+  filter(date >= as.Date("2020-03-07"))
 
 caricom_tidycovid19_cases <- tidycovid19_cases %>% 
   filter(iso3c %in% caricom)%>%
@@ -273,3 +275,4 @@ saveRDS(world_covid_regression_data, "world_covid_regression_data.rds")
 
 # Remove Unrequired Objects from the Environment --------------------------
 rm("series", "wb_countries", "wb_data", "tidycovid19", "tidycovid19_cases")
+
