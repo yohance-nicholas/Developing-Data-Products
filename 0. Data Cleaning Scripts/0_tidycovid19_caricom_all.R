@@ -120,7 +120,10 @@ caricom_totals_ts <- caricom_tidycovid19 %>%
   summarise(total_confirmed = sum(confirmed),
             total_active = sum(active),
             total_deaths = sum(deaths),
-            total_recovered = sum(recovered)) 
+            total_recovered = sum(recovered),
+            total_new_cases = sum(new_cases),
+            average_new_cases = sum(ave_new_cases)) 
+
 
 # List Top N Countries ----------------------------------------------------
 
@@ -181,82 +184,6 @@ top_6_recovery <- caricom_today %>%
   pull()
 
 
-# Clean Data for Multiple Regression Model
-caricom_covid_regression_data <- data.frame(caricom_today %>% 
-                                              select(country,
-                                                     confirmed,
-                                                     confirmed_per_100k,
-                                                     deaths,
-                                                     deaths_per_100k,
-                                                     recovered,
-                                                     active,
-                                                     mortality_rate,
-                                                     population,
-                                                     pop_density,
-                                                     pop_0_14_2018,
-                                                     pop_15_64_2018,
-                                                     pop_65_over_2018,
-                                                     diabetes_20_79,
-                                                     death_by_ncd,
-                                                     death_by_cvd_ca_dm_30_70,
-                                                     tourist_arrivals,
-                                                     gdp_capita,
-                                                     income,
-                                                     oecs,
-                                                     economy,
-                                                     contains("region"),
-                                                     contains("income"))) %>% 
-  mutate(income = case_when(income == "Low income"  ~ 1, income == "Upper middle income"  ~ 2, income == "High income"  ~ 3),
-         oecs = if_else(oecs == "OECS Member State", 1, 2),
-         economy = if_else(economy == "Commodity Based", 1, 2)) %>% 
-  column_to_rownames(var = "country")
-
-# Clean Data for Multiple Regression Model
-world_covid_regression_data <- data.frame(world_today %>% 
-                                            select(country,
-                                                   confirmed,
-                                                   confirmed_per_100k,
-                                                   deaths,
-                                                   recovered,
-                                                   active,
-                                                   deaths_per_100k,
-                                                   mortality_rate,
-                                                   population,
-                                                   pop_density,
-                                                   pop_0_14_2018,
-                                                   pop_15_64_2018,
-                                                   pop_65_over_2018,
-                                                   diabetes_20_79,
-                                                   death_by_ncd,
-                                                   death_by_cvd_ca_dm_30_70,
-                                                   tourist_arrivals,
-                                                   gdp_capita,
-                                                   region,
-                                                   income,
-                                                   contains("region"),
-                                                   contains("income"))) %>% 
-  mutate(deaths = if_else(deaths == 0, 0.01, deaths), # To prevent 0 values from becoming infinity when transformed
-         deaths_per_100k = if_else(deaths_per_100k == 0, 0.01, deaths_per_100k), # To prevent 0 values from becoming infinity when transformed
-         log_confirmed = log(confirmed),
-         log_confirmed_per_100k = log(confirmed_per_100k),
-         log_deaths = log(deaths),
-         log_deaths_per_100k = log(deaths_per_100k),
-         log_recovered = log(recovered),
-         log_active = log(active),
-         income = case_when(income == "Low income"  ~ 1, 
-                            income == "Lower middle income"  ~ 2, 
-                            income == "Upper middle income"  ~ 3, 
-                            income == "High income"  ~ 4),
-         region = case_when(region == "East Asia & Pacific"  ~ 1, 
-                            region == "Europe & Central Asia"  ~ 2, 
-                            region == "Middle East & North Africa"  ~ 4, 
-                            region == "North America	" ~ 5, 
-                            region == "South Asia"  ~ 6, 
-                            region == "Sub-Saharan Africa "  ~ 7,
-                            region == "Latin America & Caribbean" ~ 3)) %>% 
-  column_to_rownames(var = "country") %>% 
-  na.omit()
-
 # Export Data Set ---------------------------------------------------------
 # Time Series 
 write.csv(caricom_tidycovid19, "caricom_tidycovid19.csv")
@@ -267,11 +194,6 @@ saveRDS(tidycovid19, "world_tidycovid19.Rds")
 write.csv(caricom_today, "caricom_today.csv")
 saveRDS(caricom_today, "caricom_today.Rds")
 saveRDS(world_today, "world_today.Rds")
-
-# Regression Data
-write.csv(caricom_covid_regression_data, "caricom_covid_regression_data.csv")
-saveRDS(caricom_covid_regression_data, "caricom_covid_regression_data.rds")
-saveRDS(world_covid_regression_data, "world_covid_regression_data.rds")
 
 # Remove Unrequired Objects from the Environment --------------------------
 rm("series", "wb_countries", "wb_data", "tidycovid19", "tidycovid19_cases")
